@@ -4,8 +4,22 @@
 #include <fstream>
 #include <string>
 #include <nlohmann/json.hpp>
+ 
+
 using namespace std;
 using json = nlohmann::json;
+
+string xorEncryptDecrypt(const string& input, const char key) {
+    string output = input;
+
+    for (size_t i = 0; i < input.size(); i++) {
+        output[i] = input[i] ^ key;
+    }
+
+    return output;
+}
+
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(400, 200), "Formularz SFML");
 
@@ -40,6 +54,9 @@ int main() {
     text2.setPosition(15.f, 50.f);
     text2.setFillColor(sf::Color::Black);
 
+    string passwordDisplay = ""; 
+    string actualPassword = "";
+
     sf::Text submitText("Submit", font, 20);
     submitText.setPosition(15.f, 100.f);
     submitText.setFillColor(sf::Color::White);
@@ -48,6 +65,27 @@ int main() {
     std::string inputText2 = "";
     bool isTextField1Active = false;
     bool isTextField2Active = false;
+
+    ifstream inputFile("loginData.json");
+    json existingData;
+    if (inputFile) {
+        try {
+            inputFile >> existingData;
+            if (existingData.find("users") == existingData.end() || !existingData["users"].is_array()) {
+                existingData = json{ {"users", json::array()} };
+            }
+        }
+        catch (json::parse_error& e) {
+            
+            existingData = json{ {"users", json::array()} };
+            cout << "JSON parse error: " << e.what() << endl;
+        }
+        inputFile.close();
+    }
+    else {
+        
+        existingData = json{ {"users", json::array()} };
+    }
 
     while (window.isOpen()) {
         sf::Event event;
@@ -58,15 +96,32 @@ int main() {
 
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (submitButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
-                    json j;
-                    j["login"] = inputText1;
-                    j["password"] = inputText2;
+                    if (inputText1.empty() || actualPassword.empty()) {
+                        cout << "Enter data" << endl;
+                    }
+                    else {
+                        json newUser;
+                        newUser["id"] = existingData["users"].size() + 1;
+                        newUser["login"] = inputText1;
+                        newUser["password"] = xorEncryptDecrypt(actualPassword, 'X');
 
-                    ofstream outputFile("loginData.json");
-                    outputFile << j.dump(4);
-                    outputFile.close();
+                        if (existingData.find("users") == existingData.end() || !existingData["users"].is_array()) {
+                            existingData["users"] = json::array();
+                        }
 
-                    cout << "Data saved to loginData.json" << endl;
+                        existingData["users"].push_back(newUser);
+
+                        ofstream outputFile("loginData.json");
+                        outputFile << existingData.dump(4);
+                        outputFile.close();
+
+                        cout << "Data saved to loginData.json" << endl;
+
+                        inputText1 = "";
+                        inputText2 = "";
+                        text1.setString(inputText1);
+                        text2.setString(inputText2);
+                    }
                 }
                 else if (textField1.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
                     isTextField1Active = true;
@@ -90,23 +145,26 @@ int main() {
 
             if (event.type == sf::Event::TextEntered) {
                 if (isTextField1Active) {
-                    if (event.text.unicode == '\b' && !inputText1.empty()) { 
+                    if (event.text.unicode == '\b' && !inputText1.empty()) {
                         inputText1.pop_back();
                     }
-                    else if (event.text.unicode < 128 && event.text.unicode != '\b') { 
+                    else if (event.text.unicode < 128 && event.text.unicode != '\b') {
                         inputText1 += static_cast<char>(event.text.unicode);
                     }
+                    text1.setString(inputText1);
                 }
                 else if (isTextField2Active) {
-                    if (event.text.unicode == '\b' && !inputText2.empty()) { 
-                        inputText2.pop_back();
+                    if (event.text.unicode == '\b' && !actualPassword.empty()) {
+                        actualPassword.pop_back();
+                        passwordDisplay.pop_back();
                     }
-                    else if (event.text.unicode < 128 && event.text.unicode != '\b') { 
-                        inputText2 += static_cast<char>(event.text.unicode);
+                    else if (event.text.unicode < 128 && event.text.unicode != '\b') {
+                        actualPassword += static_cast<char>(event.text.unicode);
+                        passwordDisplay += '*';
                     }
+                    text2.setString(passwordDisplay); 
                 }
-                text1.setString(inputText1);
-                text2.setString(inputText2);
+       
             }
         }
 

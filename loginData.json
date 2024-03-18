@@ -1,0 +1,19 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "login": "dfds",
+            "password": "><>+<"
+        },
+        {
+            "id": 2,
+            "login": "dfdfd",
+            "password": "><>+<"
+        },
+        {
+            "id": 3,
+            "login": "fdfd56",
+            "password": "><>+<><><"
+        }
+    ]
+}
