@@ -159,9 +159,13 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Jakub\Desktop\BankApp\json-develop\include\nlohmann;C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Jakub\Desktop\BankApp\json-develop\include\nlohmann;C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="SignUpWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Header.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
