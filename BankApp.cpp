@@ -21,7 +21,7 @@ string xorEncryptDecrypt(const string& input, const char key) {
 
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(400, 200), "Formularz SFML");
+    sf::RenderWindow window(sf::VideoMode(1000, 500), "FORM");
 
     sf::RectangleShape textField1(sf::Vector2f(180.f, 30.f));
     textField1.setPosition(10.f, 10.f);
@@ -36,10 +36,16 @@ int main() {
     textField2.setOutlineThickness(2.f);
 
     sf::RectangleShape submitButton(sf::Vector2f(100.f, 30.f));
-    submitButton.setPosition(10.f, 100.f);
+    submitButton.setPosition(105.f, 100.f);
     submitButton.setFillColor(sf::Color::Red);
     submitButton.setOutlineColor(sf::Color::Black);
     submitButton.setOutlineThickness(2.f);
+
+    sf::RectangleShape registerButton(sf::Vector2f(100.f, 30.f));
+    registerButton.setPosition(10.f, 100.f);
+    registerButton.setFillColor(sf::Color::Green);
+    registerButton.setOutlineColor(sf::Color::Black);
+    registerButton.setOutlineThickness(2.f);
 
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
@@ -57,9 +63,13 @@ int main() {
     string passwordDisplay = ""; 
     string actualPassword = "";
 
-    sf::Text submitText("Submit", font, 20);
-    submitText.setPosition(15.f, 100.f);
+    sf::Text submitText("SIGN IN", font, 20);
+    submitText.setPosition(115.f, 100.f);
     submitText.setFillColor(sf::Color::White);
+
+    sf::Text registerText("SIGN UP", font, 20);
+    registerText.setPosition(15.f, 100.f); 
+    registerText.setFillColor(sf::Color::White);
 
     std::string inputText1 = "";
     std::string inputText2 = "";
@@ -96,32 +106,39 @@ int main() {
 
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (submitButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    bool loginSuccess = false; 
+
                     if (inputText1.empty() || actualPassword.empty()) {
-                        cout << "Enter data" << endl;
+                        cout << "Empty login or password" << endl;
                     }
                     else {
-                        json newUser;
-                        newUser["id"] = existingData["users"].size() + 1;
-                        newUser["login"] = inputText1;
-                        newUser["password"] = xorEncryptDecrypt(actualPassword, 'X');
+                        
+                        string encryptedPassword = xorEncryptDecrypt(actualPassword, 'X');
 
-                        if (existingData.find("users") == existingData.end() || !existingData["users"].is_array()) {
-                            existingData["users"] = json::array();
+                       
+                        for (const auto& user : existingData["users"]) {
+                            if (user["login"] == inputText1 && user["password"] == encryptedPassword) {
+                                loginSuccess = true;
+                                break;
+                            }
                         }
-
-                        existingData["users"].push_back(newUser);
-
-                        ofstream outputFile("loginData.json");
-                        outputFile << existingData.dump(4);
-                        outputFile.close();
-
-                        cout << "Data saved to loginData.json" << endl;
-
+                        if (loginSuccess) {
+                            cout << "Login successful" << endl;
+                        }
+                        else {
+                            cout << "Login failed: invalid login or password" << endl;
+                        }
                         inputText1 = "";
                         inputText2 = "";
+                        actualPassword = "";
+                        passwordDisplay = "";
                         text1.setString(inputText1);
-                        text2.setString(inputText2);
+                        text2.setString(passwordDisplay);
                     }
+                }
+                else if (registerButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                   
+                    cout << "Click sing up" << endl;
                 }
                 else if (textField1.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
                     isTextField1Active = true;
@@ -172,6 +189,8 @@ int main() {
         window.draw(textField1);
         window.draw(textField2);
         window.draw(submitButton);
+        window.draw(registerButton);
+        window.draw(registerText);
         window.draw(text1);
         window.draw(text2);
         window.draw(submitText);
