@@ -142,6 +142,7 @@ void showLoginWindow() {
                             }
                             if (loginSuccess) {
                                 cout << "Login successful" << endl;
+                                cout << "Co sie dzieje";
                             }
                             else {
                                 cout << "Login failed: invalid login or password" << endl;
