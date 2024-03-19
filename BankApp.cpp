@@ -9,11 +9,11 @@
 using namespace std;
 using json = nlohmann::json;
 
-string xorEncryptDecrypt(const string& input, const char key) {
+string xorEncryptDecrypt(const string& input, const string& key) {
     string output = input;
-
+    size_t keyLength = key.length();
     for (size_t i = 0; i < input.size(); i++) {
-        output[i] = input[i] ^ key;
+        output[i] = input[i] ^ key[i % keyLength];
     }
 
     return output;
@@ -113,7 +113,7 @@ int main() {
                     }
                     else {
                         
-                        string encryptedPassword = xorEncryptDecrypt(actualPassword, 'X');
+                        string encryptedPassword = xorEncryptDecrypt(actualPassword, "X");
 
                        
                         for (const auto& user : existingData["users"]) {
