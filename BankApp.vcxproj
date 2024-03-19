@@ -79,12 +79,12 @@
     <LibraryPath>C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ReferencePath>C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include;$(ReferencePath)</ReferencePath>
-    <LibraryPath>C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\lib;$(LibraryPath)</LibraryPath>
+    <ReferencePath>C:\Users\Klaudiusz\OneDrive\Pulpit\BankApp\SFML-2.6.1\include;$(ReferencePath)</ReferencePath>
+    <LibraryPath>C:\Users\Klaudiusz\OneDrive\Pulpit\BankApp\SFML-2.6.1\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ReferencePath>C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include;$(ReferencePath)</ReferencePath>
-    <LibraryPath>C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\lib;$(LibraryPath)</LibraryPath>
+    <ReferencePath>C:\Users\Klaudiusz\OneDrive\Pulpit\BankApp\SFML-2.6.1\include;$(ReferencePath)</ReferencePath>
+    <LibraryPath>C:\Users\Klaudiusz\OneDrive\Pulpit\BankApp\SFML-2.6.1\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -126,12 +126,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Klaudiusz\OneDrive\Pulpit\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Klaudiusz\OneDrive\Pulpit\BankApp\SFML-2.6.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-audio-d.lib;sfml-network-d.lib;sfml-system-d.lib;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -143,19 +143,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Klaudiusz\OneDrive\Pulpit\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Klaudiusz\OneDrive\Pulpit\BankApp\SFML-2.6.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-audio.lib;sfml-network.lib;sfml-system.lib;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BankApp.cpp" />
+    <ClCompile Include="SignUpWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Header.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
