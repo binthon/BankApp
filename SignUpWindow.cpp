@@ -3,6 +3,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include "Header.h" 
+#include <random>
 using json = nlohmann::json;
 using namespace std;
 
@@ -16,15 +17,26 @@ string xorEncryptDecryptPassword(const string& input, const string& key) {
 
     return output;
 }
+string generateRandomPin() {
+    random_device random; 
+    mt19937 generator(random()); 
+    uniform_int_distribution<> distr(0, 9); 
+    string pin;
+    for (int i = 0; i < 4; ++i) {
+        pin += to_string(distr(generator));
+    }
 
+    return pin;
+}
 
 struct TextField {
     sf::RectangleShape box;
     sf::Text text;
     string input;
     bool isActive = false;
+    bool isEditable = true;
 
-    TextField(float x, float y, const sf::Font& font, unsigned int fontSize = 20) {
+    TextField(float x, float y, const sf::Font& font, unsigned int fontSize = 20, bool editable = true) : isEditable(editable) {
         box.setSize(sf::Vector2f(200.f, 30.f));
         box.setPosition(x, y);
         box.setFillColor(sf::Color::Magenta);
@@ -48,7 +60,7 @@ struct TextField {
     }
 
     void handleEvent(sf::Event event) {
-        if (event.type == sf::Event::TextEntered) {
+        if (event.type == sf::Event::TextEntered && isEditable) {
             if (isActive) {
                 if (event.text.unicode == '\b' && !input.empty()) { 
                     input.pop_back();
@@ -70,12 +82,14 @@ void showSignUpWindow() {
         return;
     }
 
+    string generatedPin = generateRandomPin();
     TextField nameField(400, 50, font);
     TextField surnameField(400, 100, font);
-    TextField pinField(400, 150, font);
+    TextField pinField(400, 150, font, 20, false);
     TextField loginField(400, 200, font);
     TextField passwordField(400, 250, font);
-
+    pinField.input = generatedPin;
+    pinField.text.setString(pinField.input);
    
     sf::RectangleShape backButton(sf::Vector2f(100.f, 50.f));
     backButton.setPosition(50, 400);
@@ -120,8 +134,6 @@ void showSignUpWindow() {
             if (event.type == sf::Event::Closed) {
                 signUpWindow.close();
             }
-
-          
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (nameField.box.getGlobalBounds().contains(signUpWindow.mapPixelToCoords(sf::Mouse::getPosition(signUpWindow)))) {
                     nameField.setActive(true);
