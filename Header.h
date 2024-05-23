@@ -1,8 +1,15 @@
 #pragma once
-#ifndef SIGN_UP_WINDOW_H
-#define SIGN_UP_WINDOW_H
+#ifndef HEADER_H
+#define HEADER_H
 
-// Deklaracja funkcji, która pokazuje okno Sign Up
+#include <string>
+
+using std::string;
+
+// Function declarations
 void showSignUpWindow();
 void showLoginWindow();
-#endif
+void showUserMainWindows(const string& userName);
+void showCreateAccount(const string& userName);
+
+#endif // HEADER_H

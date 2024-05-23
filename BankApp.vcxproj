@@ -159,7 +159,9 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Jakub\Desktop\BankApp\json-develop\include\nlohmann;C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Jakub\Desktop\BankApp\json-develop\include\nlohmann;C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="CreateAccount.cpp" />
     <ClCompile Include="SignUpWindow.cpp" />
+    <ClCompile Include="UserMainWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

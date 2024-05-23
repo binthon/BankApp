@@ -1,28 +1,66 @@
 {
     "users": [
         {
+            "accounts": [
+                {
+                    "account_id": "15754188535886158930667803",
+                    "account_name": "hajs",
+                    "currency": "CAD",
+                    "id": 1
+                },
+                {
+                    "account_id": "32720190103572155456460129",
+                    "account_name": "hajsduzy",
+                    "currency": "CHF",
+                    "id": 2
+                },
+                {
+                    "account_id": "41183276629276449949393619",
+                    "account_name": "na ps5",
+                    "currency": "PLN",
+                    "id": 3
+                }
+            ],
             "id": 1,
-            "login": "1234",
-            "name": "jakub",
-            "password": "SS]_",
-            "pin": "A[][",
-            "surname": "medyn"
+            "id_user": "GZ_XR\\]A",
+            "name": "siemka",
+            "password": "\u0012\u0004\u001e\u0018\u0006",
+            "surname": "jol"
         },
         {
+            "accounts": [
+                {
+                    "account_id": "02821834335494043419864400",
+                    "account_name": "may hajs",
+                    "currency": "JPY",
+                    "id": 1
+                },
+                {
+                    "account_id": "53806503448959586183825370",
+                    "account_name": "may ",
+                    "currency": "CAD",
+                    "id": 2
+                }
+            ],
             "id": 2,
-            "login": "1234",
+            "id_user": "G_[V^Y]D",
             "name": "jakub",
-            "password": "SS]_",
-            "pin": "A[][",
+            "password": "\u000f\u0004\n\u0012\u0001",
             "surname": "medyn"
         },
         {
             "id": 3,
-            "login": "siema",
-            "name": "jakub",
-            "password": "\u0011\b\u000b\u0006\u000eFSQ",
-            "pin": "I[XV",
-            "surname": "michal"
+            "id_user": "A^YZY]]C",
+            "name": "dfd",
+            "password": "\u0004\u0005\b",
+            "surname": "fdd"
+        },
+        {
+            "id": 4,
+            "id_user": "H^X_\\^^B",
+            "name": "123",
+            "password": "SS]",
+            "surname": "123"
         }
     ]
 }
