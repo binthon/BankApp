@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AccountWindow.cpp" />
     <ClCompile Include="BankApp.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Jakub\Desktop\BankApp\json-develop\include\nlohmann;C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Jakub\Desktop\BankApp\json-develop\include\nlohmann;C:\Users\Jakub\Desktop\BankApp\SFML-2.6.1\include</AdditionalIncludeDirectories>

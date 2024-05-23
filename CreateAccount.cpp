@@ -84,7 +84,7 @@ bool accountExists(const json& user, const string& accountName) {
     return false;
 }
 
-void saveAccountData(const string& userName, const string& accountName, const string& accountId, const string& currency) {
+void saveAccountData(const string& userName, const string& accountName, const string& accountId, const string& currency, const string& balance) {
     json jsonData;
     ifstream inFile("loginData.json");
     if (inFile.is_open()) {
@@ -112,7 +112,8 @@ void saveAccountData(const string& userName, const string& accountName, const st
                 {"id", user["accounts"].size() + 1},
                 {"account_id", accountId},
                 {"account_name", accountName},
-                {"currency", currency}
+                {"currency", currency},
+                {"balance", balance}
             };
             user["accounts"].push_back(newAccount);
             break;
@@ -121,7 +122,7 @@ void saveAccountData(const string& userName, const string& accountName, const st
 
     ofstream outFile("loginData.json");
     if (outFile.is_open()) {
-        outFile << jsonData.dump(4); 
+        outFile << jsonData.dump(4);
         outFile.close();
     }
     else {
@@ -139,11 +140,11 @@ void showCreateAccount(const string& userName) {
     }
 
     sf::RectangleShape saveAccountButton(sf::Vector2f(150.f, 50.f));
-    saveAccountButton.setPosition(425, 430); 
+    saveAccountButton.setPosition(425, 430);
     saveAccountButton.setFillColor(sf::Color::Green);
 
     sf::Text saveAccountText("Save Account", font, 20);
-    saveAccountText.setPosition(440, 445); 
+    saveAccountText.setPosition(440, 445);
     saveAccountText.setFillColor(sf::Color::White);
 
     sf::RectangleShape signOutButton(sf::Vector2f(100.f, 50.f));
@@ -179,6 +180,8 @@ void showCreateAccount(const string& userName) {
     currencyLabel.setFillColor(sf::Color::White);
 
     TextField accountNameField(500, 50, font);
+    TextField balanceField(500, 250, font);
+    balanceField.setText("0"); // Set default balance to 0
 
     string accountId = generateRandomAccountId();
     sf::Text accountIdText(accountId, font, 20);
@@ -189,27 +192,25 @@ void showCreateAccount(const string& userName) {
     welcomeText.setPosition(10, 10);
     welcomeText.setFillColor(sf::Color::White);
 
-   
     sf::RectangleShape yesButton(sf::Vector2f(80.f, 30.f));
     yesButton.setPosition(500, 150);
     yesButton.setFillColor(sf::Color::Green);
 
     sf::Text yesText("Yes", font, 20);
     yesText.setPosition(510, 150);
-    yesText.setFillColor(sf::Color::White);
+    yesText.setFillColor(sf::Color::Black);
 
     sf::RectangleShape noButton(sf::Vector2f(80.f, 30.f));
     noButton.setPosition(600, 150);
-    noButton.setFillColor(sf::Color::Yellow);  
+    noButton.setFillColor(sf::Color::Yellow);
 
     sf::Text noText("No", font, 20);
     noText.setPosition(610, 150);
-    noText.setFillColor(sf::Color::White);
+    noText.setFillColor(sf::Color::Black);
 
     bool isYesSelected = false;
-    bool isNoSelected = true;  
+    bool isNoSelected = true;
 
-  
     vector<sf::RectangleShape> currencyButtons;
     vector<sf::Text> currencyTexts;
     vector<string> currencies = { "PLN", "USD", "EUR", "GBP", "AUD", "CAD", "CHF", "JPY", "CNY" };
@@ -218,7 +219,7 @@ void showCreateAccount(const string& userName) {
     for (size_t i = 0; i < currencies.size(); ++i) {
         sf::RectangleShape button(sf::Vector2f(60.f, 30.f));
         button.setPosition(startX + (i % 3) * 70, startY + (i / 3) * 40);
-        button.setFillColor(i == 0 ? sf::Color::Yellow : sf::Color::White); 
+        button.setFillColor(i == 0 ? sf::Color::Yellow : sf::Color::White);
         currencyButtons.push_back(button);
 
         sf::Text buttonText(currencies[i], font, 20);
@@ -248,10 +249,11 @@ void showCreateAccount(const string& userName) {
                     isNoSelected = true;
                     yesButton.setFillColor(sf::Color::Green);
                     noButton.setFillColor(sf::Color::Yellow);
-                    selectedCurrencyIndex = 0; 
+                    selectedCurrencyIndex = 0;
                 }
                 else {
                     accountNameField.setActive(accountNameField.box.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y));
+                    balanceField.setActive(balanceField.box.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y));
 
                     if (signOutButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
                         window.close();
@@ -271,21 +273,22 @@ void showCreateAccount(const string& userName) {
                     }
 
                     if (saveAccountButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-                        if (!accountNameField.input.empty()) {
+                        if (!accountNameField.input.empty() && !balanceField.input.empty()) {
                             string selectedCurrency = isYesSelected ? currencies[selectedCurrencyIndex] : "PLN";
-                            saveAccountData(userName, accountNameField.input, accountId, selectedCurrency);
-                            accountId = generateRandomAccountId(); 
+                            saveAccountData(userName, accountNameField.input, accountId, selectedCurrency, balanceField.input);
+                            accountId = generateRandomAccountId();
                             accountIdText.setString(accountId);
                             cout << "Account saved!" << endl;
                         }
                         else {
-                            cout << "Account Name field is empty!" << endl;
+                            cout << "Account Name or Balance field is empty!" << endl;
                         }
                     }
                 }
             }
 
             accountNameField.handleEvent(event);
+            balanceField.handleEvent(event);
         }
 
         for (size_t i = 0; i < currencyButtons.size(); ++i) {
@@ -317,7 +320,7 @@ void showCreateAccount(const string& userName) {
         window.draw(noText);
 
         if (isYesSelected) {
-            for (size_t i = 1; i < currencyButtons.size(); ++i) {  
+            for (size_t i = 1; i < currencyButtons.size(); ++i) {
                 window.draw(currencyButtons[i]);
                 window.draw(currencyTexts[i]);
             }

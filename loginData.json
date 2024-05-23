@@ -3,64 +3,62 @@
         {
             "accounts": [
                 {
-                    "account_id": "15754188535886158930667803",
-                    "account_name": "hajs",
-                    "currency": "CAD",
+                    "account_id": "05042494199153481528959781",
+                    "account_name": "fajne",
+                    "balance": "0",
+                    "currency": "PLN",
                     "id": 1
                 },
                 {
-                    "account_id": "32720190103572155456460129",
-                    "account_name": "hajsduzy",
-                    "currency": "CHF",
+                    "account_id": "62395604351231551861110052",
+                    "account_name": "drogie",
+                    "balance": "0",
+                    "currency": "CAD",
                     "id": 2
                 },
                 {
-                    "account_id": "41183276629276449949393619",
-                    "account_name": "na ps5",
-                    "currency": "PLN",
+                    "account_id": "27428283352360080289826438",
+                    "account_name": "dupa",
+                    "balance": "0",
+                    "currency": "EUR",
                     "id": 3
+                },
+                {
+                    "account_id": "52019304829770480045703677",
+                    "account_name": "cos",
+                    "balance": "0",
+                    "currency": "PLN",
+                    "id": 4
+                },
+                {
+                    "account_id": "60406244807441084372996296",
+                    "account_name": "hajs",
+                    "balance": "0",
+                    "currency": "GBP",
+                    "id": 5
                 }
             ],
             "id": 1,
-            "id_user": "GZ_XR\\]A",
-            "name": "siemka",
-            "password": "\u0012\u0004\u001e\u0018\u0006",
-            "surname": "jol"
+            "id_user": "I]]^SYY@",
+            "name": "medyn",
+            "password": "SS]",
+            "surname": "medyn"
         },
         {
             "accounts": [
                 {
-                    "account_id": "02821834335494043419864400",
-                    "account_name": "may hajs",
-                    "currency": "JPY",
+                    "account_id": "24308579085279636157444966",
+                    "account_name": "ameryka panie",
+                    "balance": "0",
+                    "currency": "USD",
                     "id": 1
-                },
-                {
-                    "account_id": "53806503448959586183825370",
-                    "account_name": "may ",
-                    "currency": "CAD",
-                    "id": 2
                 }
             ],
             "id": 2,
-            "id_user": "G_[V^Y]D",
-            "name": "jakub",
-            "password": "\u000f\u0004\n\u0012\u0001",
-            "surname": "medyn"
-        },
-        {
-            "id": 3,
-            "id_user": "A^YZY]]C",
-            "name": "dfd",
-            "password": "\u0004\u0005\b",
-            "surname": "fdd"
-        },
-        {
-            "id": 4,
-            "id_user": "H^X_\\^^B",
-            "name": "123",
-            "password": "SS]",
-            "surname": "123"
+            "id_user": "GZ[VSYZB",
+            "name": "gruby",
+            "password": "\u0005\u0013\u001b\t\u0016",
+            "surname": "gruby"
         }
     ]
 }

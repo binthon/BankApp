@@ -11,5 +11,6 @@ void showSignUpWindow();
 void showLoginWindow();
 void showUserMainWindows(const string& userName);
 void showCreateAccount(const string& userName);
+void showAccountWindow(const string& userName, const string& accountId, const string& accountName, const string& currency);
 
 #endif // HEADER_H
