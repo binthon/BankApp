@@ -3,8 +3,6 @@
 #include <fstream>
 #include <string>
 #include <nlohmann/json.hpp>
-#include <vector>
-#include <random>
 #include "Header.h"
 
 using namespace std;
@@ -15,6 +13,9 @@ json loadJson(const string& filePath) {
     json data;
     if (inputFile.good()) {
         inputFile >> data;
+    }
+    else {
+        cout << "Failed to open file: " << filePath << endl;
     }
     return data;
 }
@@ -31,7 +32,59 @@ vector<json> getAccounts(const string& userName, json& data) {
     return {};
 }
 
-void showAccountWindow(const string& userName, const string& accountId, const string& accountName, const string& currency) {
+bool hasPin(const string& userName, const json& data) {
+    for (const auto& user : data["users"]) {
+        if (user["name"] == userName && user.contains("pin")) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void updateBalanceInJson(const string& userName, const string& accountId, double amount, bool isPay) {
+    json data;
+    try {
+        data = loadJson("loginData.json");
+    }
+    catch (const json::parse_error& e) {
+        cout << "JSON parse error: " << e.what() << endl;
+        return;
+    }
+
+    for (auto& user : data["users"]) {
+        if (user["name"] == userName) {
+            if (user.contains("accounts")) {
+                for (auto& account : user["accounts"]) {
+                    if (account["account_id"] == accountId) {
+                        double currentBalance = stod(account["balance"].get<string>());
+                        if (isPay) {
+                            currentBalance += amount;
+                        }
+                        else {
+                            if (currentBalance < amount) {
+                                cout << "Insufficient balance for payout." << endl;
+                                return;
+                            }
+                            currentBalance -= amount;
+                        }
+                        account["balance"] = to_string(currentBalance);
+                        ofstream outFile("loginData.json");
+                        if (outFile.is_open()) {
+                            outFile << data.dump(4);
+                            outFile.close();
+                        }
+                        else {
+                            cout << "Could not open file for writing." << endl;
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void showAccountDetailsWindow(const string& userName, const string& accountId, const string& accountName, const string& currency) {
     sf::RenderWindow window(sf::VideoMode(1000, 500), "Account Details", sf::Style::Titlebar | sf::Style::Close);
     sf::Font font;
 
@@ -64,18 +117,35 @@ void showAccountWindow(const string& userName, const string& accountId, const st
     currencyLabel.setPosition(10, 130);
     currencyLabel.setFillColor(sf::Color::White);
 
-    json data = loadJson("loginData.json");
+    json data;
+    try {
+        data = loadJson("loginData.json");
+    }
+    catch (const json::parse_error& e) {
+        cout << "JSON parse error: " << e.what() << endl;
+        return;
+    }
+
     string balance = "0";
+    bool accountFound = false;
     for (const auto& user : data["users"]) {
-        if (user["name"] == userName) {
-            for (const auto& account : user["accounts"]) {
-                if (account["account_id"] == accountId) {
-                    balance = account["balance"];
-                    break;
+        if (user.contains("name") && user["name"] == userName) {
+            if (user.contains("accounts")) {
+                for (const auto& account : user["accounts"]) {
+                    if (account.contains("account_id") && account["account_id"] == accountId) {
+                        balance = account.value("balance", "0");
+                        accountFound = true;
+                        break;
+                    }
                 }
             }
             break;
         }
+    }
+
+    if (!accountFound) {
+        cout << "Account not found for user: " << userName << endl;
+        return;
     }
 
     sf::Text balanceLabel("Balance: " + balance, font, 20);
@@ -90,11 +160,70 @@ void showAccountWindow(const string& userName, const string& accountId, const st
     backText.setPosition(25, 440);
     backText.setFillColor(sf::Color::White);
 
+    sf::RectangleShape transferButton(sf::Vector2f(200.f, 50.f));
+    transferButton.setPosition(780, 100);
+    transferButton.setFillColor(sf::Color::Blue);
+
+    sf::Text transferText("Transfer", font, 20);
+    transferText.setPosition(815, 115);
+    transferText.setFillColor(sf::Color::White);
+
+    sf::RectangleShape depositButton(sf::Vector2f(200.f, 50.f));
+    depositButton.setPosition(780, 170);
+    depositButton.setFillColor(sf::Color::Blue);
+
+    sf::Text depositText("Deposit", font, 20);
+    depositText.setPosition(815, 185);
+    depositText.setFillColor(sf::Color::White);
+
+    sf::RectangleShape amountBox(sf::Vector2f(150.f, 30.f));
+    amountBox.setPosition(780, 230);
+    amountBox.setFillColor(sf::Color::White);
+    amountBox.setOutlineColor(sf::Color::Black);
+    amountBox.setOutlineThickness(2.f);
+
+    sf::Text amountText("", font, 20);
+    amountText.setPosition(785, 235);
+    amountText.setFillColor(sf::Color::Black);
+
+    sf::RectangleShape payButton(sf::Vector2f(100.f, 50.f));
+    payButton.setPosition(680, 280);
+    payButton.setFillColor(sf::Color::Green);
+
+    sf::Text payText("Pay", font, 20);
+    payText.setPosition(705, 295);
+    payText.setFillColor(sf::Color::White);
+
+    sf::RectangleShape payoutButton(sf::Vector2f(100.f, 50.f));
+    payoutButton.setPosition(830, 280);
+    payoutButton.setFillColor(sf::Color::Red);
+
+    sf::Text payoutText("Payout", font, 20);
+    payoutText.setPosition(845, 295);
+    payoutText.setFillColor(sf::Color::White);
+
+    sf::Text errorText("", font, 20);
+    errorText.setPosition(400, 300);
+    errorText.setFillColor(sf::Color::Red);
+
+    string amountInput;
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
+            }
+
+            if (event.type == sf::Event::TextEntered) {
+                if (isdigit(event.text.unicode) && amountInput.size() < 5) {
+                    amountInput += event.text.unicode;
+                    amountText.setString(amountInput);
+                }
+                else if (event.text.unicode == '\b' && !amountInput.empty()) {
+                    amountInput.pop_back();
+                    amountText.setString(amountInput);
+                }
             }
 
             if (event.type == sf::Event::MouseButtonPressed) {
@@ -106,6 +235,32 @@ void showAccountWindow(const string& userName, const string& accountId, const st
                     else if (signOutButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
                         window.close();
                         showLoginWindow();
+                    }
+                    else if (transferButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                        if (hasPin(userName, data)) {
+                            window.close();
+                            showTransferDetailsWindow(userName, accountId, accountName, balance); // Updated function name
+                        }
+                        else {
+                            errorText.setString("You need to set a PIN to make a transfer.");
+                        }
+                    }
+                    else if (payButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && !amountInput.empty()) {
+                        double amount = stod(amountInput);
+                        updateBalanceInJson(userName, accountId, amount, true);
+                        balance = to_string(stod(balance) + amount);
+                        balanceLabel.setString("Balance: " + balance);
+                    }
+                    else if (payoutButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && !amountInput.empty()) {
+                        double amount = stod(amountInput);
+                        if (stod(balance) >= amount) {
+                            updateBalanceInJson(userName, accountId, amount, false);
+                            balance = to_string(stod(balance) - amount);
+                            balanceLabel.setString("Balance: " + balance);
+                        }
+                        else {
+                            errorText.setString("Insufficient balance for payout.");
+                        }
                     }
                 }
             }
@@ -121,6 +276,17 @@ void showAccountWindow(const string& userName, const string& accountId, const st
         window.draw(balanceLabel);
         window.draw(backButton);
         window.draw(backText);
+        window.draw(transferButton);
+        window.draw(transferText);
+        window.draw(depositButton);
+        window.draw(depositText);
+        window.draw(amountBox);
+        window.draw(amountText);
+        window.draw(payButton);
+        window.draw(payText);
+        window.draw(payoutButton);
+        window.draw(payoutText);
+        window.draw(errorText);
         window.display();
     }
 }

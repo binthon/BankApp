@@ -1,16 +1,19 @@
-#pragma once
 #ifndef HEADER_H
 #define HEADER_H
 
 #include <string>
+#include <nlohmann/json.hpp>
 
+using json = nlohmann::json;
 using std::string;
 
 // Function declarations
+json loadJson(const std::string& filePath);
 void showSignUpWindow();
 void showLoginWindow();
 void showUserMainWindows(const string& userName);
 void showCreateAccount(const string& userName);
-void showAccountWindow(const string& userName, const string& accountId, const string& accountName, const string& currency);
+void showAccountDetailsWindow(const string& userName, const string& accountId, const string& accountName, const string& currency); // Renamed function
+void showTransferDetailsWindow(const string& userName, const string& accountId, const string& accountName, string balance); // Renamed function
 
 #endif // HEADER_H

@@ -186,7 +186,7 @@ void showSignUpWindow() {
     surnameLabel.setPosition(300, 100);
     surnameLabel.setFillColor(sf::Color::White);
 
-    sf::Text pinLabel("PIN:", font, 20);
+    sf::Text pinLabel("ID:", font, 20);
     pinLabel.setPosition(300, 150);
     pinLabel.setFillColor(sf::Color::White);
 
@@ -283,6 +283,9 @@ void showSignUpWindow() {
                     }
                     else if (passwordField.input != confirmPasswordField.input) {
                         errorText.setString("Passwords do not match.");
+                    }
+                    else if (passwordField.input.length() < 5) {
+                        errorText.setString("Password must be at least 5 characters.");
                     }
                     else {
                         errorText.setString("");

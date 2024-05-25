@@ -162,6 +162,7 @@
     </ClCompile>
     <ClCompile Include="CreateAccount.cpp" />
     <ClCompile Include="SignUpWindow.cpp" />
+    <ClCompile Include="TransferWindows.cpp" />
     <ClCompile Include="UserMainWindow.cpp" />
   </ItemGroup>
   <ItemGroup>

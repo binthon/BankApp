@@ -243,13 +243,14 @@ void showCreateAccount(const string& userName) {
                     isNoSelected = false;
                     yesButton.setFillColor(sf::Color::Yellow);
                     noButton.setFillColor(sf::Color::Red);
+                    selectedCurrencyIndex = 1;  // Set default currency to USD when Yes is selected
                 }
                 else if (noButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
                     isYesSelected = false;
                     isNoSelected = true;
                     yesButton.setFillColor(sf::Color::Green);
                     noButton.setFillColor(sf::Color::Yellow);
-                    selectedCurrencyIndex = 0;
+                    selectedCurrencyIndex = 0;  // Set default currency to PLN when No is selected
                 }
                 else {
                     accountNameField.setActive(accountNameField.box.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y));

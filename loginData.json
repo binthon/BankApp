@@ -1,64 +1,75 @@
 {
     "users": [
         {
+            "accounts": [],
+            "id": 1,
+            "id_user": "D_XV^P_G",
+            "name": "medyn",
+            "password": "SS]",
+            "pin": "8734",
+            "surname": "medyn"
+        },
+        {
+            "id": 2,
+            "id_user": "FY^_[^VD",
+            "name": "siema",
+            "password": "SS]_Z",
+            "surname": "siema"
+        },
+        {
             "accounts": [
                 {
-                    "account_id": "05042494199153481528959781",
-                    "account_name": "fajne",
-                    "balance": "0",
-                    "currency": "PLN",
+                    "account_id": "71872613262557285603058071",
+                    "account_name": "dfd",
+                    "balance": "313.000000",
+                    "currency": "AUD",
                     "id": 1
                 },
                 {
-                    "account_id": "62395604351231551861110052",
-                    "account_name": "drogie",
-                    "balance": "0",
+                    "account_id": "72438082591790407832188129",
+                    "account_name": "545fd",
+                    "balance": "106.000000",
                     "currency": "CAD",
                     "id": 2
                 },
                 {
-                    "account_id": "27428283352360080289826438",
-                    "account_name": "dupa",
-                    "balance": "0",
-                    "currency": "EUR",
+                    "account_id": "49369354674784700491573537",
+                    "account_name": "fdfd",
+                    "balance": "70.000000",
+                    "currency": "CNY",
                     "id": 3
-                },
-                {
-                    "account_id": "52019304829770480045703677",
-                    "account_name": "cos",
-                    "balance": "0",
-                    "currency": "PLN",
-                    "id": 4
-                },
-                {
-                    "account_id": "60406244807441084372996296",
-                    "account_name": "hajs",
-                    "balance": "0",
-                    "currency": "GBP",
-                    "id": 5
                 }
             ],
-            "id": 1,
-            "id_user": "I]]^SYY@",
-            "name": "medyn",
-            "password": "SS]",
+            "id": 3,
+            "id_user": "FZ_^XZV@",
+            "name": "kuba",
+            "password": "SS]_Z",
+            "pin": "4536",
             "surname": "medyn"
         },
         {
             "accounts": [
                 {
-                    "account_id": "24308579085279636157444966",
-                    "account_name": "ameryka panie",
-                    "balance": "0",
-                    "currency": "USD",
+                    "account_id": "13615700546107248916593383",
+                    "account_name": "fajne",
+                    "balance": "30.000000",
+                    "currency": "PLN",
                     "id": 1
+                },
+                {
+                    "account_id": "54020343903497993321659912",
+                    "account_name": "blik",
+                    "balance": "20.000000",
+                    "currency": "AUD",
+                    "id": 2
                 }
             ],
-            "id": 2,
-            "id_user": "GZ[VSYZB",
-            "name": "gruby",
-            "password": "\u0005\u0013\u001b\t\u0016",
-            "surname": "gruby"
+            "id": 4,
+            "id_user": "EY_^ZY_@",
+            "name": "ja",
+            "password": "\b\u0000\u0005\u001e\r",
+            "pin": "3233",
+            "surname": "ja"
         }
     ]
 }
