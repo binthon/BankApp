@@ -4,8 +4,9 @@
 #include <string>
 #include <nlohmann/json.hpp>
 #include <vector>
-#include "Header.h"
+#include <ctime>
 #include <curl/curl.h>
+#include "Header.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -35,55 +36,6 @@ json loadJsonTransfer(const std::string& filePath) {
     }
 
     return data;
-}
-
-
-vector<string> getTransferAccountNumbers(const json& data, const string& excludeAccountId) {
-    vector<string> accountNumbers;
-    for (const auto& user : data["users"]) {
-        if (user.contains("accounts")) {
-            for (const auto& account : user["accounts"]) {
-                if (account.contains("account_id") && account["account_id"] != excludeAccountId) {
-                    accountNumbers.push_back(account["account_id"]);
-                }
-            }
-        }
-    }
-    return accountNumbers;
-}
-
-bool validateTransferPin(const string& userName, const string& enteredPin, const json& data) {
-    for (const auto& user : data["users"]) {
-        if (user["name"] == userName && user.contains("pin")) {
-            return user["pin"] == enteredPin;
-        }
-    }
-    return false;
-}
-
-void updateTransferBalanceInJson(const string& accountId, double amount) {
-    json data = loadJsonTransfer("loginData.json");
-
-    for (auto& user : data["users"]) {
-        if (user.contains("accounts")) {
-            for (auto& account : user["accounts"]) {
-                if (account["account_id"] == accountId) {
-                    double currentBalance = stod(account["balance"].get<string>());
-                    currentBalance += amount;
-                    account["balance"] = to_string(currentBalance);
-                    ofstream outFile("loginData.json");
-                    if (outFile.is_open()) {
-                        outFile << data.dump(4);
-                        outFile.close();
-                    }
-                    else {
-                        cout << "Could not open file for writing." << endl;
-                    }
-                    return;
-                }
-            }
-        }
-    }
 }
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
@@ -140,6 +92,121 @@ string getAccountCurrency(const json& data, const string& accountId) {
         }
     }
     return "PLN"; // Domyœlna waluta, jeœli nie znaleziono
+}
+
+int getNextTransferId(const json& data) {
+    int maxId = 0;
+    for (const auto& user : data["users"]) {
+        if (user.contains("accounts")) {
+            for (const auto& account : user["accounts"]) {
+                if (account.contains("in")) {
+                    for (const auto& entry : account["in"]) {
+                        if (entry.contains("id") && entry["id"].is_number_integer()) {
+                            maxId = max(maxId, entry["id"].get<int>());
+                        }
+                    }
+                }
+                if (account.contains("out")) {
+                    for (const auto& entry : account["out"]) {
+                        if (entry.contains("id") && entry["id"].is_number_integer()) {
+                            maxId = max(maxId, entry["id"].get<int>());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return maxId + 1;
+}
+
+bool validateTransferPin(const string& userName, const string& enteredPin, const json& data) {
+    for (const auto& user : data["users"]) {
+        if (user["name"] == userName && user.contains("pin")) {
+            return user["pin"] == enteredPin;
+        }
+    }
+    return false;
+}
+
+
+vector<string> getTransferAccountNumbers(const json& data, const string& excludeAccountId) {
+    vector<string> accountNumbers;
+    for (const auto& user : data["users"]) {
+        if (user.contains("accounts")) {
+            for (const auto& account : user["accounts"]) {
+                if (account.contains("account_id") && account["account_id"] != excludeAccountId) {
+                    accountNumbers.push_back(account["account_id"]);
+                }
+            }
+        }
+    }
+    return accountNumbers;
+}
+
+string currentDateTime() {
+    time_t now = time(0);
+    tm ltm;
+    localtime_s(&ltm, &now);
+    char buffer[20];
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &ltm);
+    return string(buffer);
+}
+
+void updateTransferBalanceInJson(const string& accountId, double amount, bool isPay, int transferId, double exchangeRate, const string& fromAccountId, const string& toAccountId) {
+    json data = loadJsonTransfer("loginData.json");
+
+    for (auto& user : data["users"]) {
+        if (user.contains("accounts")) {
+            for (auto& account : user["accounts"]) {
+                if (account["account_id"] == accountId) {
+                    if (!account.contains("in")) {
+                        account["in"] = json::array();
+                    }
+                    if (!account.contains("out")) {
+                        account["out"] = json::array();
+                    }
+
+                    double currentBalance = stod(account["balance"].get<string>());
+                    if (isPay) {
+                        currentBalance += amount;
+                        account["in"].push_back({
+                            {"id", transferId},
+                            {"amount", amount},
+                            {"exchange_rate", exchangeRate},
+                            {"from_account_id", fromAccountId},
+                            {"to_account_id", toAccountId},
+                            {"date", currentDateTime()}
+                            });
+                    }
+                    else {
+                        if (currentBalance < amount) {
+                            cout << "Insufficient balance for payout." << endl;
+                            return;
+                        }
+                        currentBalance -= amount;
+                        account["out"].push_back({
+                            {"id", transferId},
+                            {"amount", amount},
+                            {"exchange_rate", exchangeRate},
+                            {"from_account_id", fromAccountId},
+                            {"to_account_id", toAccountId},
+                            {"date", currentDateTime()}
+                            });
+                    }
+                    account["balance"] = to_string(currentBalance);
+                    ofstream outFile("loginData.json");
+                    if (outFile.is_open()) {
+                        outFile << data.dump(4);
+                        outFile.close();
+                    }
+                    else {
+                        cout << "Could not open file for writing." << endl;
+                    }
+                    return;
+                }
+            }
+        }
+    }
 }
 
 void showTransferDetailsWindow(const string& userName, const string& accountId, const string& accountName, string balance) {
@@ -316,17 +383,19 @@ void showTransferDetailsWindow(const string& userName, const string& accountId, 
                                     cout << "To currency: " << toCurrency << endl;
 
                                     double convertedAmount = amount;
+                                    double exchangeRate = 1.0;
                                     if (fromCurrency != toCurrency) {
-                                        double exchangeRate = getExchangeRate(apiKey, fromCurrency, toCurrency);
+                                        exchangeRate = getExchangeRate(apiKey, fromCurrency, toCurrency);
                                         cout << "Exchange rate: " << exchangeRate << endl;
                                         convertedAmount = amount * exchangeRate;
                                     }
 
                                     cout << "Transfer " << amount << " from " << accountId << " to " << selectedAccount << endl;
-                                    updateTransferBalanceInJson(selectedAccount, convertedAmount);
-                                    updateTransferBalanceInJson(accountId, -amount);
+                                    int transferId = getNextTransferId(data);
 
-                                    // Pobierz zaktualizowany balans
+                                    updateTransferBalanceInJson(selectedAccount, convertedAmount, true, transferId, exchangeRate, accountId, selectedAccount);
+                                    updateTransferBalanceInJson(accountId, amount, false, transferId, exchangeRate, accountId, selectedAccount);
+
                                     json updatedData = loadJsonTransfer("loginData.json");
                                     for (const auto& user : updatedData["users"]) {
                                         if (user.contains("accounts")) {

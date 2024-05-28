@@ -3,8 +3,8 @@
 #include <fstream>
 #include <string>
 #include <nlohmann/json.hpp>
+#include <ctime>
 #include "Header.h"
-
 
 using namespace std;
 using json = nlohmann::json;
@@ -42,6 +42,15 @@ bool hasPin(const string& userName, const json& data) {
     return false;
 }
 
+string getCurrentDateTime() {
+    time_t now = time(0);
+    tm ltm;
+    localtime_s(&ltm, &now);
+    char buffer[20];
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &ltm);
+    return string(buffer);
+}
+
 void updateBalanceInJson(const string& userName, const string& accountId, double amount, bool isPay) {
     json data;
     try {
@@ -52,14 +61,25 @@ void updateBalanceInJson(const string& userName, const string& accountId, double
         return;
     }
 
+    string currentDateTime = getCurrentDateTime();
+
     for (auto& user : data["users"]) {
         if (user["name"] == userName) {
             if (user.contains("accounts")) {
                 for (auto& account : user["accounts"]) {
                     if (account["account_id"] == accountId) {
+                        // Tworzenie pól in i out, jeœli nie istniej¹
+                        if (!account.contains("in")) {
+                            account["in"] = json::array();
+                        }
+                        if (!account.contains("out")) {
+                            account["out"] = json::array();
+                        }
+
                         double currentBalance = stod(account["balance"].get<string>());
                         if (isPay) {
                             currentBalance += amount;
+                            account["in"].push_back({ {"amount", amount}, {"date", currentDateTime} });
                         }
                         else {
                             if (currentBalance < amount) {
@@ -67,6 +87,7 @@ void updateBalanceInJson(const string& userName, const string& accountId, double
                                 return;
                             }
                             currentBalance -= amount;
+                            account["out"].push_back({ {"amount", amount}, {"date", currentDateTime} });
                         }
                         account["balance"] = to_string(currentBalance);
                         ofstream outFile("loginData.json");
