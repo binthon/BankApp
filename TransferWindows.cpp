@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 #include "Header.h"
+#include <curl/curl.h>
 
 using namespace std;
 using json = nlohmann::json;
@@ -12,14 +13,30 @@ using json = nlohmann::json;
 json loadJsonTransfer(const std::string& filePath) {
     ifstream inputFile(filePath);
     json data;
+
     if (inputFile.good()) {
-        inputFile >> data;
+        try {
+            // Odczytaj zawartoœæ pliku do stringa
+            string fileContent((std::istreambuf_iterator<char>(inputFile)),
+                istreambuf_iterator<char>());
+            cout << "Plik JSON zawiera: " << fileContent << endl;
+
+            // Spróbuj sparsowaæ zawartoœæ pliku
+            data = json::parse(fileContent);
+        }
+        catch (json::parse_error& e) {
+            cerr << "JSON parse error: " << e.what() << endl;
+            cerr << "Exception id: " << e.id << endl;
+            cerr << "Byte position of error: " << e.byte << endl;
+        }
     }
     else {
-        std::cout << "Failed to open file: " << filePath << endl;
+        cout << "Failed to open file: " << filePath << endl;
     }
+
     return data;
 }
+
 
 vector<string> getTransferAccountNumbers(const json& data, const string& excludeAccountId) {
     vector<string> accountNumbers;
@@ -67,6 +84,62 @@ void updateTransferBalanceInJson(const string& accountId, double amount) {
             }
         }
     }
+}
+
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
+double getExchangeRate(const string& apiKey, const string& fromCurrency, const string& toCurrency) {
+    CURL* curl;
+    CURLcode res;
+    string readBuffer;
+
+    string url = "https://v6.exchangerate-api.com/v6/" + apiKey + "/pair/" + fromCurrency + "/" + toCurrency;
+
+    cout << "Wywo³anie API:\n";
+    cout << "URL: " << url << endl;
+    cout << "API Key: " << apiKey << endl;
+    cout << "From Currency: " << fromCurrency << endl;
+    cout << "To Currency: " << toCurrency << endl;
+
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+    curl = curl_easy_init();
+
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+        res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+
+        curl_easy_cleanup(curl);
+    }
+
+    curl_global_cleanup();
+
+    auto jsonResponse = json::parse(readBuffer);
+    return jsonResponse["conversion_rate"];
+}
+
+string getAccountCurrency(const json& data, const string& accountId) {
+    for (const auto& user : data["users"]) {
+        if (user.contains("accounts")) {
+            for (const auto& account : user["accounts"]) {
+                if (account["account_id"] == accountId && account.contains("currency")) {
+                    return account["currency"];
+                }
+            }
+        }
+    }
+    return "PLN"; // Domyœlna waluta, jeœli nie znaleziono
 }
 
 void showTransferDetailsWindow(const string& userName, const string& accountId, const string& accountName, string balance) {
@@ -190,6 +263,7 @@ void showTransferDetailsWindow(const string& userName, const string& accountId, 
 
     bool valueActive = false;
     bool pinActive = false;
+    string apiKey = "93b2b3ff1c15cd7e50e8f74b"; // Ustaw swój klucz API tutaj
 
     while (window.isOpen()) {
         sf::Event event;
@@ -235,13 +309,37 @@ void showTransferDetailsWindow(const string& userName, const string& accountId, 
                             double amount = stod(valueInput);
                             if (amount <= stod(balance)) {
                                 if (validateTransferPin(userName, pinInput, data)) {
+                                    string fromCurrency = getAccountCurrency(data, accountId);
+                                    string toCurrency = getAccountCurrency(data, selectedAccount);
+
+                                    cout << "From currency: " << fromCurrency << endl;
+                                    cout << "To currency: " << toCurrency << endl;
+
+                                    double convertedAmount = amount;
+                                    if (fromCurrency != toCurrency) {
+                                        double exchangeRate = getExchangeRate(apiKey, fromCurrency, toCurrency);
+                                        cout << "Exchange rate: " << exchangeRate << endl;
+                                        convertedAmount = amount * exchangeRate;
+                                    }
 
                                     cout << "Transfer " << amount << " from " << accountId << " to " << selectedAccount << endl;
-                                    updateTransferBalanceInJson(selectedAccount, amount);
+                                    updateTransferBalanceInJson(selectedAccount, convertedAmount);
                                     updateTransferBalanceInJson(accountId, -amount);
-                                    balance = to_string(stod(balance) - amount);
-                                    balanceText.setString("Balance: " + balance);
 
+                                    // Pobierz zaktualizowany balans
+                                    json updatedData = loadJsonTransfer("loginData.json");
+                                    for (const auto& user : updatedData["users"]) {
+                                        if (user.contains("accounts")) {
+                                            for (const auto& account : user["accounts"]) {
+                                                if (account["account_id"] == accountId) {
+                                                    balance = account["balance"].get<string>();
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    balanceText.setString("Balance: " + balance);
 
                                     valueInput.clear();
                                     selectedAccount.clear();
@@ -266,7 +364,7 @@ void showTransferDetailsWindow(const string& userName, const string& accountId, 
                     else {
                         for (size_t i = 0; i < accountTexts.size(); ++i) {
                             if (accountTexts[i].getString() != "" && accountTexts[i].getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-                                selectedAccount = accountNumbers[i / 2];  // accountNumbers index should be half of accountTexts index
+                                selectedAccount = accountNumbers[i / 2];
                                 toAccountText.setString(selectedAccount);
                                 break;
                             }
