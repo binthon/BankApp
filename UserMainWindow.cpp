@@ -6,6 +6,8 @@
 #include <vector>
 #include <random>
 #include "Header.h"
+#include <iomanip>
+#include <sstream>
 
 using namespace std;
 using json = nlohmann::json;
@@ -37,6 +39,132 @@ void saveJsonData(const string& filePath, const json& data) {
         outputFile << data.dump(4);
     }
 }
+
+#include <iomanip>
+#include <sstream>
+
+void showStatsWindow(const string& userName, const vector<json>& accounts) {
+    sf::RenderWindow statsWindow(sf::VideoMode(1000, 600), "Account Statistics", sf::Style::Titlebar | sf::Style::Close); // Increased window width
+    sf::Font font;
+
+    if (!font.loadFromFile("arial.ttf")) {
+        cout << "Could not load font\n";
+        return;
+    }
+
+    vector<pair<string, float>> accountBalances;
+
+    for (const auto& account : accounts) {
+        float inAmount = 0.0f;
+        float outAmount = 0.0f;
+
+        if (account.contains("in") && account["in"].is_array()) {
+            for (const auto& entry : account["in"]) {
+                if (entry.contains("amount") && entry["amount"].is_number()) {
+                    inAmount += entry["amount"].get<float>();
+                }
+            }
+        }
+
+        if (account.contains("out") && account["out"].is_array()) {
+            for (const auto& entry : account["out"]) {
+                if (entry.contains("amount") && entry["amount"].is_number()) {
+                    outAmount += entry["amount"].get<float>();
+                }
+            }
+        }
+
+        float totalAmount = inAmount + outAmount;
+        accountBalances.push_back({ account["account_name"].get<string>(), totalAmount });
+    }
+
+    while (statsWindow.isOpen()) {
+        sf::Event event;
+        while (statsWindow.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                statsWindow.close();
+            }
+        }
+
+        statsWindow.clear(sf::Color::Black);
+
+        float barWidth = 50.0f;
+        float barSpacing = 80.0f; // Increased spacing between bars
+        float maxHeight = 300.0f;
+        float xOffset = 100.0f;
+        float yOffset = 400.0f;
+
+        for (size_t i = 0; i < accountBalances.size(); ++i) {
+            const auto& accountBalance = accountBalances[i];
+            const string& accountName = accountBalance.first;
+            float totalAmount = accountBalance.second;
+            float inAmount = 0.0f;
+            float outAmount = 0.0f;
+
+            for (const auto& account : accounts) {
+                if (account["account_name"].get<string>() == accountName) {
+                    if (account.contains("in") && account["in"].is_array()) {
+                        for (const auto& entry : account["in"]) {
+                            if (entry.contains("amount") && entry["amount"].is_number()) {
+                                inAmount += entry["amount"].get<float>();
+                            }
+                        }
+                    }
+
+                    if (account.contains("out") && account["out"].is_array()) {
+                        for (const auto& entry : account["out"]) {
+                            if (entry.contains("amount") && entry["amount"].is_number()) {
+                                outAmount += entry["amount"].get<float>();
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+
+            float inHeight = (inAmount / totalAmount) * maxHeight;
+            float outHeight = (outAmount / totalAmount) * maxHeight;
+
+            sf::RectangleShape inBar(sf::Vector2f(barWidth, inHeight));
+            inBar.setPosition(xOffset + i * (barWidth + barSpacing), yOffset - inHeight);
+            inBar.setFillColor(sf::Color::Green);
+
+            sf::RectangleShape outBar(sf::Vector2f(barWidth, outHeight));
+            outBar.setPosition(xOffset + i * (barWidth + barSpacing), yOffset - inHeight - outHeight);
+            outBar.setFillColor(sf::Color::Red);
+
+            // Create labels for in and out amounts with percentages
+            std::ostringstream inStream, outStream;
+            inStream << std::fixed << std::setprecision(2) << inAmount << " (" << (inAmount / totalAmount * 100.0f) << "%)";
+            outStream << std::fixed << std::setprecision(2) << outAmount << " (" << (outAmount / totalAmount * 100.0f) << "%)";
+
+            sf::Text inText("In: " + inStream.str(), font, 15);
+            sf::FloatRect inTextBounds = inText.getLocalBounds();
+            inText.setPosition(xOffset + i * (barWidth + barSpacing) + (barWidth - inTextBounds.width) / 2, yOffset - inHeight - outHeight - 50);
+            inText.setFillColor(sf::Color::White);
+
+            sf::Text outText("Out: " + outStream.str(), font, 15);
+            sf::FloatRect outTextBounds = outText.getLocalBounds();
+            outText.setPosition(xOffset + i * (barWidth + barSpacing) + (barWidth - outTextBounds.width) / 2, yOffset - inHeight - outHeight - 30);
+            outText.setFillColor(sf::Color::White);
+
+            sf::Text accountNameText(accountName, font, 20);
+            sf::FloatRect accountNameBounds = accountNameText.getLocalBounds();
+            accountNameText.setPosition(xOffset + i * (barWidth + barSpacing) + (barWidth - accountNameBounds.width) / 2, yOffset + 10);
+            accountNameText.setFillColor(sf::Color::White);
+
+            statsWindow.draw(inBar);
+            statsWindow.draw(outBar);
+            statsWindow.draw(accountNameText);
+            statsWindow.draw(inText);
+            statsWindow.draw(outText);
+        }
+
+        statsWindow.display();
+    }
+}
+
+
 
 void showUserMainWindows(const string& userName) {
     sf::RenderWindow window(sf::VideoMode(1000, 500), "User Main Window", sf::Style::Titlebar | sf::Style::Close);
@@ -98,6 +226,14 @@ void showUserMainWindows(const string& userName) {
     sf::Text savePinText("Save PIN", font, 20);
     savePinText.setPosition(20, 215);
     savePinText.setFillColor(sf::Color::White);
+
+    sf::RectangleShape statsButton(sf::Vector2f(100.f, 40.f));
+    statsButton.setPosition(10, 270);  // Adjusted position below the save pin button
+    statsButton.setFillColor(sf::Color::Blue);
+
+    sf::Text statsButtonText("Stats", font, 20);
+    statsButtonText.setPosition(20, 275);
+    statsButtonText.setFillColor(sf::Color::White);
 
     json data = loadJsonData("loginData.json");
     vector<json> accounts = getUserAccounts(userName, data);
@@ -212,6 +348,9 @@ void showUserMainWindows(const string& userName) {
                             cout << "PIN must be 4 digits long and confirmed!" << endl;
                         }
                     }
+                    else if (statsButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                        showStatsWindow(userName, accounts);
+                    }
                     else {
                         int startIdx = currentPage * accountsPerPage;
                         int endIdx = min(startIdx + accountsPerPage, static_cast<int>(accounts.size()));
@@ -238,19 +377,16 @@ void showUserMainWindows(const string& userName) {
                                     }
                                 }
 
-                                saveJsonData("loginData.json", data); 
-                                accounts = getUserAccounts(userName, data); 
+                                saveJsonData("loginData.json", data);
+                                accounts = getUserAccounts(userName, data);
 
-                                
                                 totalPages = (accounts.size() + accountsPerPage - 1) / accountsPerPage;
-                                currentPage = min(currentPage, totalPages - 1); 
+                                currentPage = min(currentPage, totalPages - 1);
 
-                                
                                 if (accounts.empty()) {
                                     currentPage = 0;
                                 }
 
-                                
                                 endIdx = min(startIdx + accountsPerPage, static_cast<int>(accounts.size()));
                             }
                         }
@@ -281,6 +417,8 @@ void showUserMainWindows(const string& userName) {
         }
         window.draw(savePinButton);
         window.draw(savePinText);
+        window.draw(statsButton);
+        window.draw(statsButtonText);
 
         int startIdx = currentPage * accountsPerPage;
         int endIdx = min(startIdx + accountsPerPage, static_cast<int>(accounts.size()));

@@ -1,282 +1,143 @@
 {
     "users": [
         {
-            "accounts": [],
-            "id": 1,
-            "id_user": "D_XV^P_G",
-            "name": "medyn",
-            "password": "SS]",
-            "pin": "8734",
-            "surname": "medyn"
-        },
-        {
-            "id": 2,
-            "id_user": "FY^_[^VD",
-            "name": "siema",
-            "password": "SS]_Z",
-            "surname": "siema"
-        },
-        {
             "accounts": [
                 {
-                    "account_id": "47255759563871113802571656",
-                    "account_name": "dfdf",
-                    "balance": "41.979000",
-                    "currency": "AUD",
-                    "id": 2,
-                    "in": [
-                        {
-                            "amount": 30.062,
-                            "date": "2024-05-28 14:31:24",
-                            "exchange_rate": 1.5031,
-                            "from_account_id": "22252934989674296286003664",
-                            "id": 1,
-                            "to_account_id": "47255759563871113802571656"
-                        }
-                    ],
-                    "out": []
-                },
-                {
-                    "account_id": "03520139058538566864382676",
-                    "account_name": "dfhgh",
-                    "balance": "112.802000",
-                    "currency": "PLN",
-                    "id": 4
-                }
-            ],
-            "id": 3,
-            "id_user": "FZ_^XZV@",
-            "name": "kuba",
-            "password": "SS]_Z",
-            "pin": "4536",
-            "surname": "medyn"
-        },
-        {
-            "accounts": [
-                {
-                    "account_id": "13615700546107248916593383",
-                    "account_name": "fajne",
-                    "balance": "108.430000",
-                    "currency": "PLN",
-                    "id": 1
-                },
-                {
-                    "account_id": "54020343903497993321659912",
-                    "account_name": "blik",
-                    "balance": "70.157000",
-                    "currency": "AUD",
-                    "id": 2,
-                    "in": [
-                        {
-                            "amount": 16.323,
-                            "date": "2024-05-28 14:33:19",
-                            "exchange_rate": 1.6323,
-                            "from_account_id": "29587402664485760539287257",
-                            "id": 2,
-                            "to_account_id": "54020343903497993321659912"
-                        }
-                    ],
-                    "out": []
-                }
-            ],
-            "id": 4,
-            "id_user": "EY_^ZY_@",
-            "name": "ja",
-            "password": "\b\u0000\u0005\u001e\r",
-            "pin": "3233",
-            "surname": "ja"
-        },
-        {
-            "accounts": [
-                {
-                    "account_id": "25420015547399856598417923",
+                    "account_id": "89595899819763459056679135",
                     "account_name": "hajs",
-                    "balance": "11.249000",
-                    "currency": "PLN",
-                    "id": 1
-                },
-                {
-                    "account_id": "29587402664485760539287257",
-                    "account_name": "eurodolary",
-                    "balance": "30.118560",
-                    "currency": "EUR",
-                    "id": 2,
-                    "in": [
-                        {
-                            "amount": 40.0,
-                            "date": "2024-05-28 14:33:02"
-                        },
-                        {
-                            "amount": 0.11856,
-                            "date": "2024-06-05 14:03:17",
-                            "exchange_rate": 0.005928,
-                            "from_account_id": "78547195531379914865637443",
-                            "id": 3,
-                            "to_account_id": "29587402664485760539287257"
-                        }
-                    ],
-                    "out": [
-                        {
-                            "amount": 10.0,
-                            "date": "2024-05-28 14:33:19",
-                            "exchange_rate": 1.6323,
-                            "from_account_id": "29587402664485760539287257",
-                            "id": 2,
-                            "to_account_id": "54020343903497993321659912"
-                        }
-                    ]
-                }
-            ],
-            "id": 5,
-            "id_user": "EQVYY[YC",
-            "name": "ty",
-            "password": "SS]_Z",
-            "pin": "1233",
-            "surname": "ty"
-        },
-        {
-            "accounts": [
-                {
-                    "account_id": "22252934989674296286003664",
-                    "account_name": "kangur",
-                    "balance": "80.375500",
-                    "currency": "USD",
-                    "id": 1,
-                    "in": [
-                        {
-                            "amount": 30.0,
-                            "date": "2024-05-28 14:11:27"
-                        },
-                        {
-                            "amount": 30.0,
-                            "date": "2024-05-28 14:11:29"
-                        },
-                        {
-                            "amount": 30.0,
-                            "date": "2024-05-28 14:11:30"
-                        },
-                        {
-                            "amount": 45.0,
-                            "date": "2024-05-28 14:31:02"
-                        }
-                    ],
-                    "out": [
-                        {
-                            "amount": 30.0,
-                            "date": "2024-05-28 14:11:49"
-                        },
-                        {
-                            "amount": 30.0,
-                            "date": "2024-05-28 14:11:50"
-                        },
-                        {
-                            "amount": 30.0,
-                            "date": "2024-05-28 14:11:52"
-                        },
-                        {
-                            "amount": 20.0,
-                            "date": "2024-05-28 14:31:24",
-                            "exchange_rate": 1.5031,
-                            "from_account_id": "22252934989674296286003664",
-                            "id": 1,
-                            "to_account_id": "47255759563871113802571656"
-                        }
-                    ]
-                }
-            ],
-            "id": 6,
-            "id_user": "DXZ[_]]H",
-            "name": "siemka",
-            "password": "SS]_Z",
-            "pin": "1111",
-            "surname": "siemka"
-        },
-        {
-            "accounts": [
-                {
-                    "account_id": "78547195531379914865637443",
-                    "account_name": "hajs",
-                    "balance": "100.000000",
-                    "currency": "JPY",
-                    "id": 1,
-                    "in": [
-                        {
-                            "amount": 50.0,
-                            "date": "2024-06-05 14:02:57"
-                        },
-                        {
-                            "amount": 70.0,
-                            "date": "2024-06-05 14:05:08"
-                        }
-                    ],
-                    "out": [
-                        {
-                            "amount": 20.0,
-                            "date": "2024-06-05 14:03:17",
-                            "exchange_rate": 0.005928,
-                            "from_account_id": "78547195531379914865637443",
-                            "id": 3,
-                            "to_account_id": "29587402664485760539287257"
-                        }
-                    ]
-                }
-            ],
-            "id": 7,
-            "id_user": "D_]]X\\^@",
-            "name": "ja\t",
-            "password": "\b\u0000\u0005\u001e\r",
-            "pin": "1111",
-            "surname": "ja"
-        },
-        {
-            "accounts": [
-                {
-                    "account_id": "00187953694645691739869078",
-                    "account_name": "sdsd",
-                    "balance": "749.000000",
-                    "currency": "AUD",
+                    "balance": "333.500000",
+                    "currency": "CAD",
                     "deposits": [
                         {
-                            "amount": 8.0,
-                            "date": "2024-06-09 02:30:46",
+                            "amount": 100.0,
+                            "date": "2024-06-09 13:08:34",
+                            "duration": "3 months",
+                            "id": "1717931314",
+                            "percentage": "4%"
+                        }
+                    ],
+                    "id": 1,
+                    "in": [
+                        {
+                            "amount": 434.0,
+                            "date": "2024-06-09 12:27:11"
+                        },
+                        {
+                            "amount": 3.5,
+                            "date": "2024-06-09 13:09:43",
+                            "exchange_rate": 1.75,
+                            "from_account_id": "39578622261260531738633843",
+                            "id": 2,
+                            "to_account_id": "89595899819763459056679135"
+                        }
+                    ],
+                    "out": [
+                        {
+                            "amount": 4.0,
+                            "date": "2024-06-09 12:27:45"
+                        }
+                    ]
+                },
+                {
+                    "account_id": "05591204331381471220939916",
+                    "account_name": "money",
+                    "balance": "17.000000",
+                    "currency": "USD",
+                    "deposits": [
+                        {
+                            "amount": 2.0,
+                            "date": "2024-06-09 13:09:10",
                             "duration": "5 months",
-                            "id": "1717893046",
+                            "id": "1717931350",
                             "percentage": "3%"
                         }
                     ],
-                    "id": 1,
+                    "id": 2,
                     "in": [
                         {
-                            "amount": 4.0,
-                            "date": "2024-06-09 00:11:00"
-                        },
-                        {
-                            "amount": 545.0,
-                            "date": "2024-06-09 02:03:40"
+                            "amount": 34.0,
+                            "date": "2024-06-09 12:27:14"
                         }
                     ],
-                    "out": []
+                    "out": [
+                        {
+                            "amount": 2.0,
+                            "date": "2024-06-09 12:27:39"
+                        },
+                        {
+                            "amount": 3.0,
+                            "date": "2024-06-09 12:27:42"
+                        },
+                        {
+                            "amount": 10.0,
+                            "date": "2024-06-09 12:49:22",
+                            "exchange_rate": 0.7845,
+                            "from_account_id": "05591204331381471220939916",
+                            "id": 1,
+                            "to_account_id": "39578622261260531738633843"
+                        }
+                    ]
                 },
                 {
-                    "account_id": "64783389080265382652505030",
-                    "account_name": "njhgh",
-                    "balance": "0",
-                    "currency": "EUR",
-                    "id": 3
+                    "account_id": "39578622261260531738633843",
+                    "account_name": "df",
+                    "balance": "2.845000",
+                    "currency": "GBP",
+                    "id": 3,
+                    "in": [
+                        {
+                            "amount": 7.845,
+                            "date": "2024-06-09 12:49:22",
+                            "exchange_rate": 0.7845,
+                            "from_account_id": "05591204331381471220939916",
+                            "id": 1,
+                            "to_account_id": "39578622261260531738633843"
+                        }
+                    ],
+                    "out": [
+                        {
+                            "amount": 3.0,
+                            "date": "2024-06-09 12:49:37"
+                        },
+                        {
+                            "amount": 2.0,
+                            "date": "2024-06-09 13:09:43",
+                            "exchange_rate": 1.75,
+                            "from_account_id": "39578622261260531738633843",
+                            "id": 2,
+                            "to_account_id": "89595899819763459056679135"
+                        }
+                    ]
                 },
                 {
-                    "account_id": "68527745452326601869016695",
-                    "account_name": "njhghd",
-                    "balance": "0",
-                    "currency": "JPY",
-                    "id": 4
+                    "account_id": "46693699206812978563159172",
+                    "account_name": "trgt",
+                    "balance": "4036.000000",
+                    "currency": "PLN",
+                    "id": 4,
+                    "in": [
+                        {
+                            "amount": 4546.0,
+                            "date": "2024-06-09 13:29:42"
+                        }
+                    ],
+                    "out": [
+                        {
+                            "amount": 45.0,
+                            "date": "2024-06-09 13:29:45"
+                        },
+                        {
+                            "amount": 465.0,
+                            "date": "2024-06-09 13:29:48"
+                        }
+                    ]
                 }
             ],
-            "id": 8,
-            "id_user": "AX]\\S[]B",
+            "id": 1,
+            "id_user": "AXYVR[WE",
             "name": "jakub",
             "password": "\b\u0000\u0005\u001e\r",
-            "pin": "1111",
+            "pin": "2222",
             "surname": "jakub"
         }
     ]

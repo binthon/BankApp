@@ -5,6 +5,8 @@
 #include <nlohmann/json.hpp>
 #include <ctime>
 #include "Header.h"
+#include <map>
+#include <algorithm> 
 
 using namespace std;
 using json = nlohmann::json;
@@ -105,6 +107,136 @@ void updateBalanceInJson(const string& userName, const string& accountId, double
         }
     }
 }
+void showHistoryWindow(const string& userName, const string& accountId) {
+    sf::RenderWindow historyWindow(sf::VideoMode(1000, 600), "Transaction History", sf::Style::Titlebar | sf::Style::Close);
+    sf::Font font;
+
+    if (!font.loadFromFile("arial.ttf")) {
+        cout << "Could not load font\n";
+        return;
+    }
+
+    json data;
+    try {
+        data = loadJson("loginData.json");
+    }
+    catch (const json::parse_error& e) {
+        cout << "JSON parse error: " << e.what() << endl;
+        return;
+    }
+
+    map<string, pair<float, float>> transactions; // Map of date to (in, out) amounts
+    bool accountFound = false;
+    for (const auto& user : data["users"]) {
+        if (user["name"] == userName) {
+            if (user.contains("accounts")) {
+                for (const auto& account : user["accounts"]) {
+                    if (account["account_id"] == accountId) {
+                        if (account.contains("in")) {
+                            for (const auto& transaction : account["in"]) {
+                                if (transaction.contains("date") && transaction.contains("amount") && transaction["amount"].is_number()) {
+                                    string date = transaction["date"].get<string>().substr(0, 10); // Extract the date part
+                                    transactions[date].first += transaction["amount"].get<float>();
+                                }
+                                else {
+                                    cout << "Invalid 'in' transaction format." << endl;
+                                }
+                            }
+                        }
+                        if (account.contains("out")) {
+                            for (const auto& transaction : account["out"]) {
+                                if (transaction.contains("date") && transaction.contains("amount") && transaction["amount"].is_number()) {
+                                    string date = transaction["date"].get<string>().substr(0, 10); // Extract the date part
+                                    transactions[date].second += transaction["amount"].get<float>();
+                                }
+                                else {
+                                    cout << "Invalid 'out' transaction format." << endl;
+                                }
+                            }
+                        }
+                        accountFound = true;
+                        break;
+                    }
+                }
+            }
+            break;
+        }
+    }
+
+    if (!accountFound) {
+        cout << "Account not found for user: " << userName << endl;
+        return;
+    }
+
+    // Calculate the maximum value for scaling
+    float maxTransactionValue = 0.0f;
+    for (const auto& entry : transactions) {
+        maxTransactionValue = max(maxTransactionValue, entry.second.first + entry.second.second);
+    }
+
+    while (historyWindow.isOpen()) {
+        sf::Event event;
+        while (historyWindow.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                historyWindow.close();
+            }
+        }
+
+        historyWindow.clear(sf::Color::Black);
+
+        float barWidth = 50.0f;
+        float barSpacing = 80.0f;
+        float maxHeight = 400.0f; // Adjust this to make sure bars fit in the window
+        float xOffset = 100.0f;
+        float yOffset = 500.0f; // Adjust to provide more space at the bottom
+
+        int i = 0;
+        for (const auto& entry : transactions) {
+            string date = entry.first;
+            float inAmount = entry.second.first;
+            float outAmount = entry.second.second;
+
+            float inBarHeight = inAmount / maxTransactionValue * maxHeight;
+            float outBarHeight = outAmount / maxTransactionValue * maxHeight;
+
+            sf::RectangleShape inBar(sf::Vector2f(barWidth, inBarHeight));
+            inBar.setPosition(xOffset + i * (barWidth + barSpacing), yOffset - inBarHeight - outBarHeight);
+            inBar.setFillColor(sf::Color::Green);
+
+            sf::RectangleShape outBar(sf::Vector2f(barWidth, outBarHeight));
+            outBar.setPosition(xOffset + i * (barWidth + barSpacing), yOffset - outBarHeight);
+            outBar.setFillColor(sf::Color::Red);
+
+            sf::Text dateText(date, font, 15);
+            sf::FloatRect dateTextBounds = dateText.getLocalBounds();
+            dateText.setPosition(xOffset + i * (barWidth + barSpacing) + (barWidth - dateTextBounds.width) / 2, yOffset + 10);
+            dateText.setFillColor(sf::Color::White);
+
+            sf::Text inAmountLabel("In: " + to_string(inAmount), font, 15);
+            sf::FloatRect inAmountLabelBounds = inAmountLabel.getLocalBounds();
+            inAmountLabel.setPosition(xOffset + i * (barWidth + barSpacing) + (barWidth - inAmountLabelBounds.width) / 2, yOffset - inBarHeight - outBarHeight - 40);
+            inAmountLabel.setFillColor(sf::Color::White);
+
+            sf::Text outAmountLabel("Out: " + to_string(outAmount), font, 15);
+            sf::FloatRect outAmountLabelBounds = outAmountLabel.getLocalBounds();
+            outAmountLabel.setPosition(xOffset + i * (barWidth + barSpacing) + (barWidth - outAmountLabelBounds.width) / 2, yOffset - inBarHeight - outBarHeight - 20);
+            outAmountLabel.setFillColor(sf::Color::White);
+
+            historyWindow.draw(inBar);
+            historyWindow.draw(outBar);
+            historyWindow.draw(dateText);
+            historyWindow.draw(inAmountLabel);
+            historyWindow.draw(outAmountLabel);
+
+            i++;
+        }
+
+        historyWindow.display();
+    }
+}
+
+
+
 
 
 void showAccountDetailsWindow(const string& userName, const string& accountId, const string& accountName, const string& currency) {
@@ -183,6 +315,14 @@ void showAccountDetailsWindow(const string& userName, const string& accountId, c
     backText.setPosition(25, 440);
     backText.setFillColor(sf::Color::White);
 
+    sf::RectangleShape historyButton(sf::Vector2f(100.f, 50.f));
+    historyButton.setPosition(120, 430);
+    historyButton.setFillColor(sf::Color::Blue);
+
+    sf::Text historyText("History", font, 20);
+    historyText.setPosition(135, 440);
+    historyText.setFillColor(sf::Color::White);
+
     sf::RectangleShape transferButton(sf::Vector2f(200.f, 50.f));
     transferButton.setPosition(780, 100);
     transferButton.setFillColor(sf::Color::Blue);
@@ -259,6 +399,9 @@ void showAccountDetailsWindow(const string& userName, const string& accountId, c
                         window.close();
                         showLoginWindow();
                     }
+                    else if (historyButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                        showHistoryWindow(userName, accountId);
+                    }
                     else if (transferButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
                         if (hasPin(userName, data)) {
                             window.close();
@@ -303,6 +446,8 @@ void showAccountDetailsWindow(const string& userName, const string& accountId, c
         window.draw(balanceLabel);
         window.draw(backButton);
         window.draw(backText);
+        window.draw(historyButton);
+        window.draw(historyText);
         window.draw(transferButton);
         window.draw(transferText);
         window.draw(depositButton);
