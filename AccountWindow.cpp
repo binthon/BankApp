@@ -68,7 +68,7 @@ void updateBalanceInJson(const string& userName, const string& accountId, double
             if (user.contains("accounts")) {
                 for (auto& account : user["accounts"]) {
                     if (account["account_id"] == accountId) {
-                        // Tworzenie pól in i out, jeœli nie istniej¹
+                        // Create in and out fields if they do not exist
                         if (!account.contains("in")) {
                             account["in"] = json::array();
                         }
@@ -105,6 +105,7 @@ void updateBalanceInJson(const string& userName, const string& accountId, double
         }
     }
 }
+
 
 void showAccountDetailsWindow(const string& userName, const string& accountId, const string& accountName, const string& currency) {
     sf::RenderWindow window(sf::VideoMode(1000, 500), "Account Details", sf::Style::Titlebar | sf::Style::Close);
@@ -266,6 +267,10 @@ void showAccountDetailsWindow(const string& userName, const string& accountId, c
                         else {
                             errorText.setString("You need to set a PIN to make a transfer.");
                         }
+                    }
+                    else if (depositButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                        window.close();
+                        showDepositWindow(userName, accountId, accountName, stoi(balance), currency); // Show the deposit window
                     }
                     else if (payButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && !amountInput.empty()) {
                         double amount = stod(amountInput);

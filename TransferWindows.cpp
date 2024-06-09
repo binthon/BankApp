@@ -330,7 +330,7 @@ void showTransferDetailsWindow(const string& userName, const string& accountId, 
 
     bool valueActive = false;
     bool pinActive = false;
-    string apiKey = "93b2b3ff1c15cd7e50e8f74b"; // Ustaw swój klucz API tutaj
+    string apiKey = "93b2b3ff1c15cd7e50e8f74b"; // klucz API tutaj
 
     while (window.isOpen()) {
         sf::Event event;

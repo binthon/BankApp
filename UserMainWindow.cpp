@@ -238,19 +238,19 @@ void showUserMainWindows(const string& userName) {
                                     }
                                 }
 
-                                saveJsonData("loginData.json", data); // Save updated JSON data
-                                accounts = getUserAccounts(userName, data); // Refresh the account list
+                                saveJsonData("loginData.json", data); 
+                                accounts = getUserAccounts(userName, data); 
 
-                                // Recalculate total pages
+                                
                                 totalPages = (accounts.size() + accountsPerPage - 1) / accountsPerPage;
-                                currentPage = min(currentPage, totalPages - 1); // Adjust current page if necessary
+                                currentPage = min(currentPage, totalPages - 1); 
 
-                                // If no accounts are left, reset to the first page
+                                
                                 if (accounts.empty()) {
                                     currentPage = 0;
                                 }
 
-                                // Update the endIdx for the loop to avoid accessing invalid elements
+                                
                                 endIdx = min(startIdx + accountsPerPage, static_cast<int>(accounts.size()));
                             }
                         }
