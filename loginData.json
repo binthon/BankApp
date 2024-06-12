@@ -72,7 +72,7 @@
                 {
                     "account_id": "74115007158726295763169224",
                     "account_name": "Kamper",
-                    "balance": "24.046500",
+                    "balance": "25.187700",
                     "currency": "GBP",
                     "id": 2,
                     "in": [
@@ -82,6 +82,14 @@
                             "exchange_rate": 0.1955,
                             "from_account_id": "32505534547448461064248900",
                             "id": 3,
+                            "to_account_id": "74115007158726295763169224"
+                        },
+                        {
+                            "amount": 1.1412,
+                            "date": "2024-06-12 19:49:52",
+                            "exchange_rate": 0.5706,
+                            "from_account_id": "54258621342944565171504373",
+                            "id": 4,
                             "to_account_id": "74115007158726295763169224"
                         }
                     ],
@@ -151,6 +159,52 @@
             "name": "Jakub",
             "password": "2\u000e\u0002\u0002\u001b\u0012\u0002\n\u000f\u0007\u0000\u000e",
             "surname": "Nowak"
+        },
+        {
+            "accounts": [
+                {
+                    "account_id": "54258621342944565171504373",
+                    "account_name": "hajs",
+                    "balance": "1.000000",
+                    "currency": "CAD",
+                    "deposits": [
+                        {
+                            "amount": 3.0,
+                            "date": "2024-06-12 19:49:32",
+                            "duration": "5 months",
+                            "id": "1718214572",
+                            "percentage": "4%"
+                        }
+                    ],
+                    "id": 1,
+                    "in": [
+                        {
+                            "amount": 10.0,
+                            "date": "2024-06-12 19:49:12"
+                        }
+                    ],
+                    "out": [
+                        {
+                            "amount": 4.0,
+                            "date": "2024-06-12 19:49:15"
+                        },
+                        {
+                            "amount": 2.0,
+                            "date": "2024-06-12 19:49:52",
+                            "exchange_rate": 0.5706,
+                            "from_account_id": "54258621342944565171504373",
+                            "id": 4,
+                            "to_account_id": "74115007158726295763169224"
+                        }
+                    ]
+                }
+            ],
+            "id": 4,
+            "id_user": "E[YW\\P^A",
+            "name": "ja",
+            "password": "\b\u0000\u0005\u001e\r",
+            "pin": "1111",
+            "surname": "ja"
         }
     ]
 }
