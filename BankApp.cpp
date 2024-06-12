@@ -1,17 +1,17 @@
-﻿#include<SFML/Graphics.hpp>
-
+﻿#include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <nlohmann/json.hpp>
-
 #include "Header.h"
 
 using namespace std;
 using json = nlohmann::json;
 
 void showLoginWindow();
+void showSignUpWindow();
+void showUserMainWindows(const string& userName);
 
 string xorEncryptDecrypt(const string& input, const string& key) {
     string output = input;
@@ -19,204 +19,246 @@ string xorEncryptDecrypt(const string& input, const string& key) {
     for (size_t i = 0; i < input.size(); i++) {
         output[i] = input[i] ^ key[i % keyLength];
     }
-
     return output;
 }
 
 int main() {
-    
     showLoginWindow();
+    cout << "Hello World";
     return 0;
 }
 
-    
+struct TextField {
+    sf::Sprite frame;
+    sf::Text text;
+    string input;
+    bool isActive = false;
+
+    TextField(float x, float y, const sf::Font& font, const sf::Texture& texture, unsigned int fontSize = 20) {
+        frame.setTexture(texture);
+        frame.setPosition(x, y);
+
+        text.setFont(font);
+        text.setCharacterSize(fontSize);
+        text.setPosition(x + 10, y + 8);
+        text.setFillColor(sf::Color::Black);
+    }
+
+    void setActive(bool active) {
+        isActive = active;
+    }
+
+    void handleEvent(sf::Event event) {
+        if (event.type == sf::Event::TextEntered && isActive) {
+            if (event.text.unicode == '\b' && !input.empty()) {
+                input.pop_back();
+            }
+            else if (event.text.unicode < 128 && event.text.unicode != '\b') {
+                input += static_cast<char>(event.text.unicode);
+            }
+            text.setString(input);
+        }
+    }
+};
+
+void setErrorMessage(sf::Text& errorMessage, const std::string& message, const sf::RenderWindow& window) {
+    errorMessage.setString(message);
+    sf::FloatRect textRect = errorMessage.getLocalBounds();
+    errorMessage.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+    errorMessage.setPosition(window.getSize().x / 4.0f, window.getSize().y / 2.0f + 185.0f);
+}
+
 void showLoginWindow() {
-        sf::RenderWindow window(sf::VideoMode(1000, 500), "FORM");
+    sf::RenderWindow window(sf::VideoMode(1920, 1080), "FORM");
+    sf::Font font;
+    if (!font.loadFromFile("TTFors.ttf")) {
+        cout << "Could not load font\n";
+        return;
+    }
+    sf::Texture frameTexture;
+    if (!frameTexture.loadFromFile("frame.png")) {
+        cerr << "Failed to load frame texture\n";
+        return;
+    }
+    sf::Sprite logoSprite;
+    sf::Texture logoTexture;
+    if (!logoTexture.loadFromFile("logo.png")) {
+        cerr << "Failed to load logo texture\n";
+        return;
+    }
+    sf::Texture backButtonTexture;
+    if (!backButtonTexture.loadFromFile("back_button.png")) {
+        cerr << "Failed to load back button texture\n";
+        return;
+    }
+    sf::Texture saveButtonTexture;
+    if (!saveButtonTexture.loadFromFile("save_button.png")) {
+        cerr << "Failed to load save button texture\n";
+        return;
+    }
+    sf::Texture rightImageTexture;
+    if (!rightImageTexture.loadFromFile("right_image.jpg")) { 
+        cerr << "Failed to load right image texture\n";
+        return;
+    }
+    sf::Sprite rightImageSprite;
+    rightImageSprite.setTexture(rightImageTexture);
+    rightImageSprite.setPosition(window.getSize().x / 2, 0);
+    rightImageSprite.setScale(window.getSize().x / 2 / rightImageSprite.getLocalBounds().width,
+        window.getSize().y / rightImageSprite.getLocalBounds().height);
 
-        sf::RectangleShape textField1(sf::Vector2f(180.f, 30.f));
-        textField1.setPosition(10.f, 10.f);
-        textField1.setFillColor(sf::Color::White);
-        textField1.setOutlineColor(sf::Color::Black);
-        textField1.setOutlineThickness(2.f);
+    logoSprite.setTexture(logoTexture);
+    logoSprite.setPosition(window.getSize().x / 4 - logoSprite.getLocalBounds().width / 2, 0);
 
-        sf::RectangleShape textField2(sf::Vector2f(180.f, 30.f));
-        textField2.setPosition(10.f, 50.f);
-        textField2.setFillColor(sf::Color::White);
-        textField2.setOutlineColor(sf::Color::Black);
-        textField2.setOutlineThickness(2.f);
+    float fieldX = window.getSize().x / 4 - 50.f;
+    float fieldY = logoSprite.getPosition().y + logoSprite.getLocalBounds().height - 100.f;
+    TextField login(fieldX, fieldY+1, font, frameTexture);
+    TextField password(fieldX, fieldY + 51, font, frameTexture);
 
-        sf::RectangleShape submitButton(sf::Vector2f(100.f, 30.f));
-        submitButton.setPosition(105.f, 100.f);
-        submitButton.setFillColor(sf::Color::Red);
-        submitButton.setOutlineColor(sf::Color::Black);
-        submitButton.setOutlineThickness(2.f);
+    sf::Vector2f buttonPos(window.getSize().x / 4 + 50, window.getSize().y - 450);
+    sf::Sprite backButton(backButtonTexture);
+    backButton.setPosition(buttonPos.x - 150, buttonPos.y - 80);
 
-        sf::RectangleShape registerButton(sf::Vector2f(100.f, 30.f));
-        registerButton.setPosition(10.f, 100.f);
-        registerButton.setFillColor(sf::Color::Green);
-        registerButton.setOutlineColor(sf::Color::Black);
-        registerButton.setOutlineThickness(2.f);
+    sf::Sprite saveButton(saveButtonTexture);
+    saveButton.setPosition(buttonPos.x - 150, buttonPos.y);
 
-        sf::Font font;
-        if (!font.loadFromFile("arial.ttf")) {
-      
-        }
+    sf::Vector2f labelPos(fieldX - 115, fieldY + 7);
+    sf::Text loginLabel("Login:", font, 20);
+    loginLabel.setPosition(labelPos.x, labelPos.y);
+    loginLabel.setFillColor(sf::Color::White);
 
-        sf::Text text1("", font, 20);
-        text1.setPosition(15.f, 10.f);
-        text1.setFillColor(sf::Color::Black);
+    sf::Text passwordLabel("Password:", font, 20);
+    passwordLabel.setPosition(labelPos.x, labelPos.y + 50);
+    passwordLabel.setFillColor(sf::Color::White);
 
-        sf::Text text2("", font, 20);
-        text2.setPosition(15.f, 50.f);
-        text2.setFillColor(sf::Color::Black);
+    sf::Text backText("Sign in", font, 20);
+    backText.setPosition(backButton.getPosition().x + 65, backButton.getPosition().y + 15);
+    backText.setFillColor(sf::Color::White);
 
-        sf::Text loginLabel("<---- Login", font, 20);
-        loginLabel.setPosition(textField1.getPosition().x + textField1.getSize().x + 10, textField1.getPosition().y);
-        loginLabel.setFillColor(sf::Color::White);
+    sf::Text saveText("Sign up", font, 20);
+    saveText.setPosition(saveButton.getPosition().x + 65, saveButton.getPosition().y + 15);
+    saveText.setFillColor(sf::Color::White);
 
-        sf::Text passwordLabel("<---- Password", font, 20);
-        passwordLabel.setPosition(textField2.getPosition().x + textField2.getSize().x + 10, textField2.getPosition().y);
-        passwordLabel.setFillColor(sf::Color::White);
+    sf::Text errorMessage("", font, 20);
+    errorMessage.setFillColor(sf::Color::Red);
 
-        string passwordDisplay = "";
-        string actualPassword = "";
+    string passwordDisplay = "";
+    string actualPassword = "";
 
-        sf::Text submitText("SIGN IN", font, 20);
-        submitText.setPosition(115.f, 100.f);
-        submitText.setFillColor(sf::Color::White);
-
-        sf::Text registerText("SIGN UP", font, 20);
-        registerText.setPosition(15.f, 100.f);
-        registerText.setFillColor(sf::Color::White);
-
-        std::string inputText1 = "";
-        std::string inputText2 = "";
-        bool isTextField1Active = false;
-        bool isTextField2Active = false;
-
-        ifstream inputFile("loginData.json");
-        json existingData;
-        if (inputFile) {
-            try {
-                inputFile >> existingData;
-                if (existingData.find("users") == existingData.end() || !existingData["users"].is_array()) {
-                    existingData = json{ {"users", json::array()} };
-                }
-            }
-            catch (json::parse_error& e) {
-
+    ifstream inputFile("loginData.json");
+    json existingData;
+    if (inputFile) {
+        try {
+            inputFile >> existingData;
+            if (existingData.find("users") == existingData.end() || !existingData["users"].is_array()) {
                 existingData = json{ {"users", json::array()} };
-                cout << "JSON parse error: " << e.what() << endl;
             }
-            inputFile.close();
         }
-        else {
-
+        catch (json::parse_error& e) {
             existingData = json{ {"users", json::array()} };
+            cout << "JSON parse error: " << e.what() << endl;
         }
+        inputFile.close();
+    }
+    else {
+        existingData = json{ {"users", json::array()} };
+    }
 
-        while (window.isOpen()) {
-            sf::Event event;
-            while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed) {
-                    window.close();
-                }
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
 
-                if (event.type == sf::Event::MouseButtonPressed) {
-                    if (submitButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
-                        bool loginSuccess = false;
+            if (event.type == sf::Event::MouseButtonPressed) {
+                errorMessage.setString("");
 
-                        if (inputText1.empty() || actualPassword.empty()) {
-                            cout << "Empty login or password" << endl;
-                        }
-                        else {
+                if (backButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    bool loginSuccess = false;
+                    string userName = "";
 
-                            string encryptedPassword = xorEncryptDecrypt(actualPassword, "bankowa");
-
-
-                            for (const auto& user : existingData["users"]) {
-                                if (user["login"] == inputText1 && user["password"] == encryptedPassword) {
-                                    loginSuccess = true;
-                                    break;
-                                }
-                            }
-                            if (loginSuccess) {
-                                cout << "Login successful" << endl;
-                                cout << "Co sie dzieje";
-                            }
-                            else {
-                                cout << "Login failed: invalid login or password" << endl;
-                            }
-                            inputText1 = "";
-                            inputText2 = "";
-                            actualPassword = "";
-                            passwordDisplay = "";
-                            text1.setString(inputText1);
-                            text2.setString(passwordDisplay);
-                        }
-                    }
-                    else if (registerButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
-                        window.close();
-                        showSignUpWindow();
-
-                    }
-                    else if (textField1.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
-                        isTextField1Active = true;
-                        isTextField2Active = false;
-                        textField1.setOutlineColor(sf::Color::Blue);
-                        textField2.setOutlineColor(sf::Color::Black);
-                    }
-                    else if (textField2.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
-                        isTextField1Active = false;
-                        isTextField2Active = true;
-                        textField1.setOutlineColor(sf::Color::Black);
-                        textField2.setOutlineColor(sf::Color::Blue);
+                    if (login.input.empty() || password.input.empty()) {
+                        setErrorMessage(errorMessage, "Empty login or password", window);
                     }
                     else {
-                        isTextField1Active = false;
-                        isTextField2Active = false;
-                        textField1.setOutlineColor(sf::Color::Black);
-                        textField2.setOutlineColor(sf::Color::Black);
+                        string encryptedUserID = xorEncryptDecrypt(login.input, "pinokio");
+                        string encryptedPassword = xorEncryptDecrypt(password.input, "bankowa");
+
+                        for (const auto& user : existingData["users"]) {
+                            if (user["id_user"] == encryptedUserID && user["password"] == encryptedPassword) {
+                                loginSuccess = true;
+                                userName = user["name"];
+                                break;
+                            }
+                        }
+                        if (loginSuccess) {
+                            cout << "Login successful" << endl;
+                            window.close();
+                            showUserMainWindows(userName);
+                        }
+                        else {
+                            setErrorMessage(errorMessage, "Login failed: invalid login or password", window);
+                        }
+                        login.input.clear();
+                        password.input.clear();
+                        passwordDisplay.clear();
+                        login.text.setString("");
+                        password.text.setString("");
                     }
                 }
+                else if (saveButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    window.close();
+                    showSignUpWindow();
+                }
 
-                if (event.type == sf::Event::TextEntered) {
-                    if (isTextField1Active) {
-                        if (event.text.unicode == '\b' && !inputText1.empty()) {
-                            inputText1.pop_back();
-                        }
-                        else if (event.text.unicode < 128 && event.text.unicode != '\b') {
-                            inputText1 += static_cast<char>(event.text.unicode);
-                        }
-                        text1.setString(inputText1);
-                    }
-                    else if (isTextField2Active) {
-                        if (event.text.unicode == '\b' && !actualPassword.empty()) {
-                            actualPassword.pop_back();
-                            passwordDisplay.pop_back();
-                        }
-                        else if (event.text.unicode < 128 && event.text.unicode != '\b') {
-                            actualPassword += static_cast<char>(event.text.unicode);
-                            passwordDisplay += '*';
-                        }
-                        text2.setString(passwordDisplay);
-                    }
-
+                if (login.frame.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    login.setActive(true);
+                    password.setActive(false);
+                }
+                else if (password.frame.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    login.setActive(false);
+                    password.setActive(true);
+                }
+                else {
+                    login.setActive(false);
+                    password.setActive(false);
                 }
             }
 
-            window.clear();
-            window.draw(textField1);
-            window.draw(textField2);
-            window.draw(loginLabel);
-            window.draw(passwordLabel);
-            window.draw(submitButton);
-            window.draw(registerButton);
-            window.draw(registerText);
-            window.draw(text1);
-            window.draw(text2);
-            window.draw(submitText);
-            window.display();
+            if (event.type == sf::Event::TextEntered) {
+                if (login.isActive) {
+                    login.handleEvent(event);
+                }
+                else if (password.isActive) {
+                    if (event.text.unicode == '\b' && !actualPassword.empty()) {
+                        actualPassword.pop_back();
+                        passwordDisplay.pop_back();
+                    }
+                    else if (event.text.unicode < 128 && event.text.unicode != '\b') {
+                        actualPassword += static_cast<char>(event.text.unicode);
+                        passwordDisplay += '*';
+                    }
+                    password.input = actualPassword;
+                    password.text.setString(passwordDisplay);
+                }
+            }
         }
+
+        window.clear(sf::Color(0x38, 0xB6, 0xFF));
+        window.draw(logoSprite);
+        window.draw(login.frame);
+        window.draw(login.text);
+        window.draw(password.frame);
+        window.draw(password.text);
+        window.draw(loginLabel);
+        window.draw(passwordLabel);
+        window.draw(backButton);
+        window.draw(saveButton);
+        window.draw(backText);
+        window.draw(saveText);
+        window.draw(errorMessage);
+        window.draw(rightImageSprite); 
+        window.display();
+    }
 }
-//fsdfdfd odszyfrowane hasło do user ID=3

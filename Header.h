@@ -1,8 +1,20 @@
-#pragma once
-#ifndef SIGN_UP_WINDOW_H
-#define SIGN_UP_WINDOW_H
+#ifndef HEADER_H
+#define HEADER_H
 
-// Deklaracja funkcji, która pokazuje okno Sign Up
+#include <string>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+using std::string;
+
+// Function declarations
+json loadJson(const std::string& filePath);
 void showSignUpWindow();
 void showLoginWindow();
-#endif
+void showUserMainWindows(const string& userName);
+void showCreateAccount(const string& userName);
+void showAccountDetailsWindow(const string& userName, const string& accountId, const string& accountName, const string& currency);
+void showTransferDetailsWindow(const string& userName, const string& accountId, const string& accountName, string balance);
+void showDepositWindow(const string& userName, const string& accountId, const string& accountName, double balance, const string& currency);
+
+#endif // HEADER_H

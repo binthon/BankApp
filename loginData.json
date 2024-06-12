@@ -1,0 +1,156 @@
+{
+    "users": [
+        {
+            "accounts": [
+                {
+                    "account_id": "32505534547448461064248900",
+                    "account_name": "Wakacje",
+                    "balance": "897.245000",
+                    "currency": "PLN",
+                    "deposits": [
+                        {
+                            "amount": 1000.0,
+                            "date": "2024-06-11 13:33:34",
+                            "duration": "3 months",
+                            "id": "1718105614",
+                            "percentage": "5%"
+                        },
+                        {
+                            "amount": 2000.0,
+                            "date": "2024-06-11 14:42:15",
+                            "duration": "3 months",
+                            "id": "1718109735",
+                            "percentage": "3%"
+                        }
+                    ],
+                    "id": 1,
+                    "in": [
+                        {
+                            "amount": 4000.0,
+                            "date": "2024-06-11 13:32:54"
+                        },
+                        {
+                            "amount": 43.245,
+                            "date": "2024-06-11 13:36:12",
+                            "exchange_rate": 4.3245,
+                            "from_account_id": "96898838074057648615909306",
+                            "id": 1,
+                            "to_account_id": "32505534547448461064248900"
+                        },
+                        {
+                            "amount": 100.0,
+                            "date": "2024-06-11 14:40:27"
+                        },
+                        {
+                            "amount": 100.0,
+                            "date": "2024-06-11 14:40:29"
+                        }
+                    ],
+                    "out": [
+                        {
+                            "amount": 123.0,
+                            "date": "2024-06-11 14:27:00",
+                            "exchange_rate": 0.2312,
+                            "from_account_id": "32505534547448461064248900",
+                            "id": 2,
+                            "to_account_id": "96898838074057648615909306"
+                        },
+                        {
+                            "amount": 100.0,
+                            "date": "2024-06-11 14:40:32"
+                        },
+                        {
+                            "amount": 123.0,
+                            "date": "2024-06-11 14:40:55",
+                            "exchange_rate": 0.1955,
+                            "from_account_id": "32505534547448461064248900",
+                            "id": 3,
+                            "to_account_id": "74115007158726295763169224"
+                        }
+                    ]
+                },
+                {
+                    "account_id": "74115007158726295763169224",
+                    "account_name": "Kamper",
+                    "balance": "24.046500",
+                    "currency": "GBP",
+                    "id": 2,
+                    "in": [
+                        {
+                            "amount": 24.0465,
+                            "date": "2024-06-11 14:40:55",
+                            "exchange_rate": 0.1955,
+                            "from_account_id": "32505534547448461064248900",
+                            "id": 3,
+                            "to_account_id": "74115007158726295763169224"
+                        }
+                    ],
+                    "out": []
+                }
+            ],
+            "id": 1,
+            "id_user": "GQ^XY\\WI",
+            "name": "Karol",
+            "password": "2\u000e\u0002\u0002\u001b\u0012\u0002\n\u000f\u0007\u0000\u000e",
+            "pin": "1234",
+            "surname": "Zdeb"
+        },
+        {
+            "accounts": [
+                {
+                    "account_id": "96898838074057648615909306",
+                    "account_name": "Oszczednosci",
+                    "balance": "395.437600",
+                    "currency": "EUR",
+                    "deposits": [
+                        {
+                            "amount": 123.0,
+                            "date": "2024-06-11 13:36:23",
+                            "duration": "3 months",
+                            "id": "1718105783",
+                            "percentage": "5%"
+                        }
+                    ],
+                    "id": 1,
+                    "in": [
+                        {
+                            "amount": 500.0,
+                            "date": "2024-06-11 13:35:10"
+                        },
+                        {
+                            "amount": 28.4376,
+                            "date": "2024-06-11 14:27:00",
+                            "exchange_rate": 0.2312,
+                            "from_account_id": "32505534547448461064248900",
+                            "id": 2,
+                            "to_account_id": "96898838074057648615909306"
+                        }
+                    ],
+                    "out": [
+                        {
+                            "amount": 10.0,
+                            "date": "2024-06-11 13:36:12",
+                            "exchange_rate": 4.3245,
+                            "from_account_id": "96898838074057648615909306",
+                            "id": 1,
+                            "to_account_id": "32505534547448461064248900"
+                        }
+                    ]
+                }
+            ],
+            "id": 2,
+            "id_user": "GZ_X]]\\I",
+            "name": "Tomasz",
+            "password": ".\u0004\t\u0002\u001b\u000e\f\u0003\u0002\u0004\n^B",
+            "pin": "5555",
+            "surname": "Kwacz"
+        },
+        {
+            "id": 3,
+            "id_user": "E\\_^Y\\VB",
+            "name": "Jakub",
+            "password": "2\u000e\u0002\u0002\u001b\u0012\u0002\n\u000f\u0007\u0000\u000e",
+            "surname": "Nowak"
+        }
+    ]
+}
